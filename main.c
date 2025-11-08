@@ -4,14 +4,14 @@
 
 // Estructuras de Juegos, Usuarios, Administradores, Fechas y Torneos
 typedef struct stVideojuego {
-    char idJuego[10]; // Código único del juego (ej. "LOL", "CS2")
+    char idJuego[10]; // Cï¿½digo ï¿½nico del juego (ej. "LOL", "CS2")
     char nombre[50];
     char genero[30];
     char plataforma[20];
 } Videojuego;
 
 typedef struct stUsuario {
-    char idUsuario[10]; // ID de jugador único
+    char idUsuario[10]; // ID de jugador ï¿½nico
     char nickname[30];
     char email[50];
     char pais[30];
@@ -56,7 +56,7 @@ typedef struct stInscripcion {
 
 int main()
 {
-
+    printf("Hola Mundo");
 
     return 0;
 }
