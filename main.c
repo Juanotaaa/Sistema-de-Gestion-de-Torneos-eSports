@@ -64,17 +64,24 @@ int validacionDeMail(char[]);
 Usuario crearUsuario();
 int guardarUsuario(Usuario, char[]);
 void mostrarUsuario(Usuario usuario);
-int leerArchivoUsuario(char archivo[]);
-
+int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension);
+int redimensionarMemoriaUsuario(Usuario *x, int dim);
+Usuario* asignarMemoriaUsuario(int dim);
 
 int main()
 {
+
     Usuario usuario=crearUsuario();
     mostrarUsuario(usuario);
     guardarUsuario(usuario, ARCHIVO_USUARIO);
-    leerArchivoUsuario(ARCHIVO_USUARIO);
+    int dimension=0; //Este esta bien que no sea puntero porque en la funcion solamente se manejara un puntero a un solo elemento (no es un arreglo)
+    Usuario* listaUsuarios=NULL; //Debe ser un puntero porque en la funcion ese puntero va a contener varios valores (sera un arreglo)
+    leerArchivoUsuario(ARCHIVO_USUARIO, listaUsuarios, &dimension);
+    printf("\ndimension actual es: %d\n", dimension);
    
 
+    free(listaUsuarios);
+    listaUsuarios=NULL;
     return 0;
 }
 
@@ -171,7 +178,7 @@ return usuario;
 int guardarUsuario(Usuario x, char archivo[]){
 
     printf("\nGuardando en archivo\n");
-    FILE* usuarioArchivo=fopen(archivo, "wb");
+    FILE* usuarioArchivo=fopen(archivo, "ab");
 
     if(!usuarioArchivo){
         printf("\nEl archivo no pudo abrirse\n");
@@ -185,7 +192,7 @@ int guardarUsuario(Usuario x, char archivo[]){
 return 1;
 }
 
-int leerArchivoUsuario(char archivo[]){
+int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension){
 
     printf("\nLeyendo el archivo\n");
     FILE* usuarioArchivo=fopen(archivo, "rb");
@@ -196,13 +203,19 @@ int leerArchivoUsuario(char archivo[]){
     }
 
     Usuario x;
+    int i=0;
+    (*dimension)=i+1;
 
-    while(!feof(usuarioArchivo)){
-    
-        fread(&x, sizeof(Usuario), 1, usuarioArchivo);
-        if(!feof(usuarioArchivo)){
-           mostrarUsuario(x);
-        }
+    while(fread(&x, sizeof(Usuario), 1, usuarioArchivo)>0){
+        printf("\nLeyendo linea %d\n", *dimension); //para que me lo tome como valor hay que agregarle *
+        mostrarUsuario(x);
+        /*if(redimensionarMemoriaUsuario(usuarios, (int)(*dimension))){
+            printf("\nLinea leida %d", *dimension);
+            usuarios[i]=x;
+            i++;
+            (*dimension)=i+1;
+        }*/
+        
     }
 
     fclose(usuarioArchivo);
@@ -219,12 +232,20 @@ return x_calloc;
 }
 
 
-int redimensionarMemoriaUsuario(Usuario **x, int dim){
+int redimensionarMemoriaUsuario(Usuario *x, int dim){
 
-    int nuevaDim= dim;
+    int nuevaDim=dim;
 
+    Usuario* aux=(Usuario*)realloc(x, nuevaDim* sizeof(Usuario));
     
-
+    if(aux!=NULL){
+        x=aux;
+        dim=nuevaDim;
+        return 1;
+    }else{
+        printf("\nError al redimensionar el arreglo\n");
+        return 0;
+    }
 
 }
 
