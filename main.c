@@ -7,6 +7,13 @@
 #define MIN_CONTRA 5
 #define MAX_CONTRA 20
 #define ARCHIVO_USUARIO "usuario.bin"
+//MENUS
+#define MENU_PRINCIPAL 1
+#define MENU_USUARIO 2
+#define MENU_ADMINISTRADOR 3
+#define MENU_USUARIO_LOGEADO 4
+#define MENU_ADMINISTRADOR_LOGEADO 5
+
 
 // Estructuras de Juegos, Usuarios, Administradores, Fechas y Torneos
 typedef struct stVideojuego {
@@ -59,6 +66,7 @@ typedef struct stInscripcion {
 
 
 ///Prototipado:
+void funcionMenu(int menu);
 int validacionContrasenia(char contrasenia[]);
 int validacionDeMail(char[]);
 Usuario crearUsuario();
@@ -70,20 +78,128 @@ Usuario* asignarMemoriaUsuario(int dim);
 
 int main()
 {
-
-    Usuario usuario=crearUsuario();
+    funcionMenu(MENU_PRINCIPAL);
+    /*Usuario usuario=crearUsuario();
     mostrarUsuario(usuario);
     guardarUsuario(usuario, ARCHIVO_USUARIO);
     int dimension=0; //Este esta bien que no sea puntero porque en la funcion solamente se manejara un puntero a un solo elemento (no es un arreglo)
     Usuario* listaUsuarios=NULL; //Debe ser un puntero porque en la funcion ese puntero va a contener varios valores (sera un arreglo)
     leerArchivoUsuario(ARCHIVO_USUARIO, listaUsuarios, &dimension);
-    printf("\ndimension actual es: %d\n", dimension);
+    printf("\ndimension actual es: %d\n", dimension);*/
    
 
-    free(listaUsuarios);
-    listaUsuarios=NULL;
+
+
+    //free(listaUsuarios);
+    //listaUsuarios=NULL;
     return 0;
 }
+
+void funcionMenu(int menu){
+
+system("cls");
+
+int opcion=0;
+
+switch (menu)
+{
+case MENU_PRINCIPAL:
+    printf("\n\tBIENVENIDO A NEXUS\n");
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Ingresar como usuario\n");
+    printf("\n\t[2]-Ingresar como administrador\n");
+    fflush(stdin);
+    scanf("%d", &opcion);
+        if(opcion==1){
+            funcionMenu(MENU_USUARIO);
+        }else if(opcion==2){
+            funcionMenu(MENU_ADMINISTRADOR);
+        }else{
+            printf("\n\tOpcion invalida, por favor ingrese una opcion correcta\n");
+            system("pause");
+            funcionMenu(MENU_PRINCIPAL);
+        }
+        
+    break;
+case MENU_USUARIO:
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Ingresar\n");
+    printf("\n\t[2]-No tiene cuenta? Registrese aqui!\n");
+    printf("\n\t[3]-Regresar al MENU PRINCIPAL\n");
+    scanf("%d", &opcion);
+    fflush(stdin);
+        if(opcion==1){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if(opcion==2){
+            crearUsuario();
+            funcionMenu(MENU_USUARIO);
+        }if(opcion==3){
+            funcionMenu(MENU_PRINCIPAL);
+        }
+
+break;
+case MENU_ADMINISTRADOR:
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Ingresar\n");
+    printf("\n\t[2]-Regresar al MENU PRINCIPAL\n");
+    scanf("%d", &opcion);
+    fflush(stdin);
+        if(opcion==1){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if(opcion==2){
+            funcionMenu(MENU_PRINCIPAL);
+        }
+
+break;
+case MENU_USUARIO_LOGEADO:
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Ver perfil\n");
+    printf("\n\t[2]-Ver torneos disponibles\n");
+    printf("\n\t[3]-Inscripcion a torneos\n");
+    printf("\n\t[4]-Cerrar sesion\n");
+    fflush(stdin);
+    scanf("%d", &opcion);
+        if(opcion==1){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if(opcion==2){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if (opcion==3){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if (opcion==4){
+           printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }
+        
+    
+break;
+case MENU_ADMINISTRADOR_LOGEADO:
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Agregar torneo\n");
+    printf("\n\t[2]-Modificar torneo\n"); 
+    printf("\n\t[3]-Ver ganancias\n");
+    printf("\n\t[4]-Ver usuarios\n");
+    printf("\n\t[5]-Cerrar sesion\n");
+    fflush(stdin);
+    scanf("%d", &opcion);
+         if(opcion==1){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if(opcion==2){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if (opcion==3){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if (opcion==4){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }if (opcion==5){
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        }
+
+break;
+default:
+    break;
+}
+
+
+}
+
 
 
 
@@ -116,6 +232,10 @@ return esValido;
 
 int validacionDeMail(char email[]){
 
+    //Esta es una funcion auxiliar para validar el mail, creamos una variable dimension para que guarde los datos del email
+    //cargado, con strlen podemos contar cuantos caracteres tiene. Luego se crea una variable "esValido" que la igualamos a 1.
+    //Hacemos un if donde validamos el tamaño, usamos || porque no pide que sean las dos condiciones al mismo tiempo.
+
     int dimension=strlen(email);
     int esValido=1;
     if(dimension<MIN_EMAIL || dimension>MAX_EMAIL){
@@ -127,8 +247,13 @@ return esValido;
 }
 
 
-
+ 
 Usuario crearUsuario(){
+
+    //Funcion donde creamos el usuario, al comienzo hace un recordatorio de todas las condiciones para validar
+    //Creamos 3 variables, un char (para usar como condicion de corte en el do while) y dos variables de entero
+    //para igualar despues las funciones auxiliares. Realizo un do while porque mi intencion es que al menos 
+    //el ciclo se haga una vez, hago un bucle tanto para el email como para la contraseña. Retorno el usuario.
 
     Usuario usuario;
     printf("\nRecuerde que para registrarse, debe ingresar un email valido y una contrasenia que cumpla con los siguientes requisitos:\n");
