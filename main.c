@@ -65,7 +65,7 @@ typedef struct stInscripcion {
 
 
 
-///Prototipado:
+///PROTOTIPADO
 void funcionMenu(int menu);
 int validacionContrasenia(char contrasenia[]);
 int validacionDeMail(char[]);
@@ -75,6 +75,10 @@ void mostrarUsuario(Usuario usuario);
 int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension);
 int redimensionarMemoriaUsuario(Usuario *x, int dim);
 Usuario* asignarMemoriaUsuario(int dim);
+Torneo cargaTorneo(); //Llevar a Main -Fran
+int validacionIDTorneo(char idTorneo[]); //Llevar a Main -Fran
+void crearTorneo(Torneo torneo); //Llevar a Main -Fran
+void modificarTorneo(char idTorneo[]); //Llevar a Main -Fran
 
 int main()
 {
@@ -87,6 +91,7 @@ int main()
     leerArchivoUsuario(ARCHIVO_USUARIO, listaUsuarios, &dimension);
     printf("\ndimension actual es: %d\n", dimension);*/
    
+    
 
 
 
@@ -181,9 +186,12 @@ case MENU_ADMINISTRADOR_LOGEADO:
     fflush(stdin);
     scanf("%d", &opcion);
          if(opcion==1){
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+            crearTorneo(cargaTorneo());
         }if(opcion==2){
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+            char idTorneo[10];
+            printf("Ingrese el ID del torneo a modificar: ");
+            scanf("%s", idTorneo);
+            modificarTorneo(idTorneo);
         }if (opcion==3){
             printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }if (opcion==4){
@@ -384,4 +392,171 @@ void mostrarUsuario(Usuario usuario){
     printf("Contrasenia: %s\n", usuario.contrasenia);
     printf("Nivel: %d\n", usuario.nivel);
 
+}
+
+
+void crearTorneo(Torneo torneo){
+    
+    FILE *ArchivoTorneo = fopen("torneos.bin", "ab");
+    if(ArchivoTorneo == NULL){
+        printf("No se pudo abrir el archivo de torneos.\n");
+        return;
+    }
+
+    Torneo T;
+    T = cargaTorneo();
+    fwrite(&T, sizeof(Torneo), 1, ArchivoTorneo);
+    fclose(ArchivoTorneo);
+
+}
+
+
+Torneo cargaTorneo(){
+    //Funcion para cargar los datos de un torneo nuevo
+    Torneo T;
+
+    printf("\nIngrese ID del torneo: \n");
+    scanf("%s", T.idTorneo);
+
+    int Existe = validacionIDTorneo(T.idTorneo); //Validacion si ya existe el Torneo
+    while(Existe == 0){
+        printf("Ingrese un ID de torneo valido: ");
+        scanf("%s", T.idTorneo);
+        Existe = validacionIDTorneo(T.idTorneo);
+    }
+
+    printf("Ingrese nombre del torneo: \n");
+    scanf("%s", T.nombre);
+
+    printf("Ingrese ID del juego: \n");
+    scanf("%s", T.juego.idJuego);
+
+    printf("Ingrese nombre del juego: \n");
+    scanf("%s", T.juego.nombre);
+
+    printf("Ingrese genero del juego: PVP, FPS, Battle Royale, Extract Shooter... \n");
+    scanf("%s", T.juego.genero);
+
+    printf("Ingrese plataforma del juego: PC/Xbox/Playstation (PS) \n");
+    scanf("%s", T.juego.plataforma);
+
+    printf("Ingrese capacidad maxima del torneo: \n");
+    scanf("%d", &T.capacidadMaxima);
+
+    T.cuposDisponibles = T.capacidadMaxima; //Todos los cupos estan disponibles al inicio
+
+    printf("Ingrese fecha de inicio (dd mm aaaa): \n");
+    scanf("%d %d %d", &T.fechaInicio.dia, &T.fechaInicio.mes, &T.fechaInicio.anio);
+
+    do {
+        printf("Ingrese premio total del torneo: \n");
+        scanf("%f", &T.premioTotal);
+        if (T.premioTotal < 1) {
+            printf("El premio total no puede ser menor a una unidad unica de puntos. Por favor, ingrese un valor valido.\n");
+        }
+    } while (T.premioTotal < 1);
+
+    strcpy(T.estado, "Abierto"); //Todos los torneos comienzan en estado "Abierto"
+
+    return T;
+}
+
+int validacionIDTorneo(char idTorneo[]){ //Chequea que el ID no exista desde antes -Fran
+    FILE *ArchivoTorneo = fopen("torneos.bin", "rb");
+    if(ArchivoTorneo == NULL){
+        printf("No se pudo abrir el archivo de torneos.\n");
+        return 1; // Si no se puede abrir el archivo, asumimos que el ID es válido
+    }
+
+    Torneo T;
+    int esValido = 1;
+
+    while(fread(&T, sizeof(Torneo), 1, ArchivoTorneo) > 0){
+        if(strcmp(T.idTorneo, idTorneo) == 0){
+            printf("El ID del torneo ya existe. Ingrese un ID diferente.\n");
+            esValido = 0;
+            break;
+        }
+    }
+
+    fclose(ArchivoTorneo);
+    return esValido;
+}
+
+void modificarTorneo(char idTorneo[]){ //MODULARIZAR O MEJORAR CON SWITCH PARA CADA CAMPO -F
+    FILE *ArchivoTorneo = fopen("torneos.bin", "r+b");
+    if(ArchivoTorneo == NULL){
+        printf("No se pudo abrir el archivo de torneos.\n");
+        return;
+    }
+
+    Torneo T;
+    int encontrado = 0;
+    char respuesta = 's';
+
+    while(fread(&T, sizeof(Torneo), 1, ArchivoTorneo) > 0){
+        if(strcmp(T.idTorneo, idTorneo) == 0){
+            encontrado = 1;
+            printf("Torneo encontrado. Ingrese los nuevos datos:\n");
+
+            printf ("Desea modificiar el nombre del torneo? S/N \n");
+            fflush(stdin);
+            scanf(" %c", &respuesta);
+            if (respuesta == 's' || respuesta == 'S') {
+                printf("Ingrese nuevo nombre del torneo: \n");
+            scanf("%s", T.nombre);
+            }
+
+            printf("Desea modificar la capacidad maxima del torneo? S/N \n");
+            fflush(stdin);
+            scanf(" %c", &respuesta);
+            if (respuesta == 's' || respuesta == 'S') {
+            printf("Ingrese nueva capacidad maxima del torneo: \n");
+            scanf("%d", &T.capacidadMaxima);
+            }
+            T.cuposDisponibles = T.capacidadMaxima; // Actualizar cupos disponibles
+        
+            printf("Desea modificar la fecha de inicio del torneo? S/N \n");
+            fflush(stdin);
+            scanf(" %c", &respuesta);
+            if (respuesta == 's' || respuesta == 'S') {
+            printf("Ingrese nueva fecha de inicio (dd mm aaaa): \n");
+            scanf("%d %d %d", &T.fechaInicio.dia, &T.fechaInicio.mes, &T.fechaInicio.anio);
+            }
+
+            printf("Desea modificar el premio total del torneo? S/N \n");
+            fflush(stdin);
+            scanf(" %c", &respuesta);
+            if (respuesta == 's' || respuesta == 'S') {
+            printf("Ingrese nuevo premio total del torneo: \n");
+            scanf("%f", &T.premioTotal);
+            }
+
+            printf("Desea modificar el estado del torneo? S/N \n");
+            fflush(stdin); 
+            scanf(" %c", &respuesta);
+            if (respuesta == 's' || respuesta == 'S') { //Se asegura que los profes no se pasen de vivos (<3) -Fran
+                int estadoValido = 0;
+                 do {
+                        printf("Ingrese nuevo estado del torneo (Abierto, EnCurso, Finalizado): \n");
+                        scanf("%s", T.estado);
+                        if (strcmp(T.estado, "Abierto") == 0 || strcmp(T.estado, "EnCurso") == 0 || strcmp(T.estado, "Finalizado") == 0) {
+                            estadoValido = 1;
+                        } else {
+                            printf("Estado inválido. Los valores válidos son: Abierto, EnCurso, Finalizado.\n");
+                            }
+                            } while (!estadoValido);
+                        }
+
+            fseek(ArchivoTorneo, -sizeof(Torneo), SEEK_CUR); // Mover el puntero al inicio del registro encontrado
+            fwrite(&T, sizeof(Torneo), 1, ArchivoTorneo); //Sobrescribir el registro con los nuevos datos
+            printf("Torneo modificado exitosamente.\n");
+            break;
+        }
+    }
+
+    if(!encontrado){
+        printf("No se encontro un torneo con el ID proporcionado.\n");
+    }
+    fclose(ArchivoTorneo);
 }
