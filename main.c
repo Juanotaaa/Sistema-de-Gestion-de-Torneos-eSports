@@ -80,6 +80,15 @@ const Administrador a[] =
 };
 const int totalAdmins = sizeof(a) / sizeof(a[0]);
 
+/// struct para promocion
+
+typedef struct
+{
+    char idUsuario[20];
+    int cantidadTorneos;
+} Ranking;
+
+
 ///PROTOTIPADO
 //prototipado de cande
 void funcionMenu(int menu);
@@ -115,7 +124,7 @@ int validarCupos(Torneo T);
 void registrarInscripcion();
 int buscarUsuarioPorID(char id[], Usuario *U);
 void verParticipantesTorneo();
-
+void rankingTorneo();
 
 /// prototipado juani
 void verInfoDetalladaUsuario();
@@ -242,9 +251,10 @@ void funcionMenu(int menu)
         printf("\n\t[5]-Agregar Videojuego\n");
         printf("\n\t[6]-Modificar Videojuego\n");
         printf("\n\t[7]-ver catalogo de Videojuegos\n");
-        printf("\n\t[8]-Cerrar sesion\n");
-        printf("\n\t[9]-Registrar inscripcion\n");
-        printf("\n\t[10]-Ver participantes de un torneo\n");
+        printf("\n\t[8]-Registrar inscripcion\n");
+        printf("\n\t[9]-Ver participantes de un torneo\n");
+        printf("\n\t[10]-Ver ranking de jugadores\n");
+        printf("\n\t[11]-Cerrar sesion\n");
         fflush(stdin);
         scanf("%d", &opcion);
         if (opcion==1)
@@ -285,15 +295,21 @@ void funcionMenu(int menu)
         }
         if (opcion==8)
         {
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+            registrarInscripcion();
         }
         if(opcion == 9)
         {
-            registrarInscripcion();
+            verParticipantesTorneo();
         }
         if(opcion == 10)
         {
-            verParticipantesTorneo();
+
+            rankingTorneo();
+        }
+        if(opcion == 11)
+        {
+
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }
 
 
@@ -1309,5 +1325,124 @@ void verInfoDetalladaUsuario()
 
     if(!encontrado)
         printf("\nNo se encontro el usuario.\n");
+}
+
+
+/// adicional
+
+
+
+void rankingTorneo()
+{
+    char idTorneo[10];
+    printf("Ingrese ID del torneo: ");
+    scanf("%s", idTorneo);
+
+    Torneo T;
+    int pos;
+    if (!buscarTorneoPorID(idTorneo, &T, &pos))
+    {
+        printf("No existe un torneo con ese ID.\n");
+        return;
+    }
+
+    FILE* archi = fopen("inscripciones.bin", "rb");
+    if (!archi)
+    {
+        printf("No se pudo abrir inscripciones.\n");
+        return;
+    }
+
+    Inscripcion I;
+    Ranking lista[200];
+    int cant = 0;
+
+    // Guardamos solo los usuarios  participan de este torneo
+    while (fread(&I, sizeof(Inscripcion), 1, archi) == 1)
+    {
+        if (strcmp(I.idTorneo, idTorneo) == 0)
+        {
+            /// evitamos los duplicados
+            int encontrado = 0;
+            for (int i = 0; i < cant; i++)
+            {
+                if (strcmp(lista[i].idUsuario, I.idUsuario) == 0)
+                {
+                    encontrado = 1;
+
+                }
+            }
+
+
+            if (!encontrado && cant < 200) // si no fue encontrado lo agregamos
+            {
+                strcpy(lista[cant].idUsuario, I.idUsuario);
+                lista[cant].cantidadTorneos = 0;
+                cant++;
+            }
+        }
+    }
+
+    fclose(archi);
+
+    if (cant == 0)
+    {
+        printf("No hay participantes inscritos en este torneo.\n");
+        return;
+    }
+
+
+    for (int i = 0; i < cant; i++)
+    {
+        FILE* archivo = fopen("inscripciones.bin", "rb");
+        if (!archivo)
+        {
+            printf("Error al reabrir inscripciones.\n");
+            return;
+        }
+
+        Inscripcion aux;
+
+        while (fread(&aux, sizeof(Inscripcion), 1, archivo) == 1)
+        {
+            if (strcmp(aux.idUsuario, lista[i].idUsuario) == 0)
+                lista[i].cantidadTorneos++;
+        }
+
+        fclose(archivo);
+    }
+
+
+    for (int i = 0; i < cant - 1; i++)
+    {
+        for (int j = 0; j < cant - i - 1; j++)
+        {
+            if (lista[j].cantidadTorneos < lista[j + 1].cantidadTorneos)
+            {
+                Ranking aux = lista[j];
+                lista[j] = lista[j + 1];
+                lista[j + 1] = aux;
+            }
+        }
+    }
+
+    /// Mostramos ranking
+    printf("\n Ranking de participantes del torneo %s (por torneos jugados totales) \n", T.nombre);
+
+    for (int i = 0; i < cant; i++)
+    {
+        Usuario U;
+        if (buscarUsuarioPorID(lista[i].idUsuario, &U))
+        {
+            printf("%d) %s (ID: %s) - %d torneos jugados\n",i + 1,U.nickname,lista[i].idUsuario,lista[i].cantidadTorneos);
+        }
+        else
+        {
+
+            printf("%d) ID: %s - %d torneos jugados (usuario no encontrado)\n", i + 1, lista[i].idUsuario, lista[i].cantidadTorneos);
+        }
+    }
+
+    printf("\n");
 }
 
