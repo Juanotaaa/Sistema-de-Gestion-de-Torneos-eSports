@@ -220,60 +220,60 @@ void funcionMenu(int menu)
 
     case MENU_ADMINISTRADOR_LOGEADO:
         printf("\n\tPresione la opcion que desea:\n");
-        printf("\n\t[9]-Ver torneos\n");
-        printf("\n\t[1]-Agregar torneo\n");
-        printf("\n\t[2]-Modificar torneo\n");
-        printf("\n\t[3]-Ver ganancias\n");
-        printf("\n\t[4]-Ver usuarios\n");
-        printf("\n\t[5]-Agregar Videojuego\n");
-        printf("\n\t[6]-Modificar Videojuego\n");
-        printf("\n\t[7]-ver catalogo de Videojuegos\n");
-        printf("\n\t[8]-Cerrar sesion\n");
+        printf("\n\t[1]-Ver torneos\n");
+        printf("\n\t[2]-Agregar torneo\n");
+        printf("\n\t[3]-Modificar torneo\n");
+        printf("\n\t[4]-Ver ganancias\n");
+        printf("\n\t[5]-Ver usuarios\n");
+        printf("\n\t[6]-Agregar Videojuego\n");
+        printf("\n\t[7]-Modificar Videojuego\n");
+        printf("\n\t[8]-ver catalogo de Videojuegos\n");
+        printf("\n\t[9]-Cerrar sesion\n");
         fflush(stdin);
         scanf("%d", &opcion);
-        if(opcion==1)
+        if (opcion==1)
+        {
+            verListadoTorneos();
+            
+        }
+        if(opcion==2)
         {
             crearTorneo();
         }
-        if(opcion==2)
+        if(opcion==3)
         {
             char idTorneo[10];
             printf("Ingrese el ID del torneo a modificar: ");
             scanf("%s", idTorneo);
             modificarTorneo(idTorneo);
         }
-        if (opcion==3)
+        if (opcion==4)
         {
             printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }
-        if (opcion==4)
+        if (opcion==5)
         {
             verListadoUsuarios();
         }
-        if (opcion==5)
+        if (opcion==6)
         {
             Videojuego juego = cargaVideojuego();
             guardarVideojuego(juego);
         }
-        if (opcion==6)
+        if (opcion==7)
         {
             char idModificado[10];
             printf("ingrese ID del Videojuego a modificar: ");
             scanf("%s",idModificado);
             modificarVideojuego(idModificado);
         }
-        if (opcion==7)
+        if (opcion==8)
         {
             verCatalogoVideojuegos();
         }
-        if (opcion==8)
-        {
-            funcionMenu(MENU_PRINCIPAL);
-        }
         if (opcion==9)
         {
-            verListadoTorneos();
-            
+            funcionMenu(MENU_PRINCIPAL);
         }
         break;
 
