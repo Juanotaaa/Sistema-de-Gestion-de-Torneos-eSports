@@ -163,7 +163,6 @@ void funcionMenu(int menu)
         }
         if(opcion==2){
             Usuario u = crearUsuario();
-            // completar otros campos si se desea
             guardarUsuario(u, ARCHIVO_USUARIO);
             funcionMenu(MENU_USUARIO);
         }
@@ -181,9 +180,6 @@ void funcionMenu(int menu)
         fflush(stdin);
         if(opcion==1){
             loginAdministrador();
-            /* Nota: en el código original se llamaba a funcionMenu(MENU_ADMINISTRADOR_LOGEADO)
-               inmediatamente después de loginAdministrador(); se mantiene ese comportamiento
-               para no alterar la lógica original (aunque loginAdministrador no fuerza entrar). */
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
         if(opcion==2){
@@ -556,7 +552,7 @@ Torneo cargaTorneo()
     printf("\nIngrese ID del torneo: \n");
     scanf("%s", T.idTorneo);
 
-    int Existe = validacionIDTorneo(T.idTorneo); //Validacion si ya existe el Torneo
+    int Existe = validacionIDTorneo(T.idTorneo); 
     while(Existe == 0)
     {
         printf("Ingrese un ID de torneo valido: ");
@@ -598,7 +594,7 @@ Torneo cargaTorneo()
     }
     while (T.premioTotal < 1);
 
-    strcpy(T.estado, "Abierto"); //Todos los torneos comienzan en estado "Abierto"
+    strcpy(T.estado, "Abierto"); 
 
     return T;
 }
@@ -769,7 +765,6 @@ Videojuego cargaVideojuego()
 
     } while (control == 0);
 
-    // Nota: en el código original se leía idJuego desde string; mantenemos la validación de existencia:
     printf("Ingrese ID como texto para almacenar (ej. '1' o 'G1'): ");
     scanf("%s", juego.idJuego);
 
@@ -907,7 +902,7 @@ void verCatalogoVideojuegos()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Funciones agregadas por Juani: ver/listar/agregar/modificar usuarios (fusionadas)
+/// Funciones agregadas por Juani: ver/listar/agregar/modificar 
 void agregarModificarUsuario()
 {
     Usuario u;
@@ -965,7 +960,7 @@ void agregarModificarUsuario()
         fclose(buffer);
     }
 
-    // Si no existe → agregar nuevo
+    
     printf("\nUsuario no encontrado. Se procedera a agregarlo.\n");
 
     printf("Ingrese nickname: ");
@@ -1058,3 +1053,4 @@ void verInfoDetalladaUsuario()
     if(!encontrado)
         printf("\nNo se encontro el usuario.\n");
 }
+
