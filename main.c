@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "string.h"
+#include <string.h>
 
-#define MIN_EMAIL 5
-#define MAX_EMAIL 50
+#define MIN_NICKNAME 5
+#define MAX_NICKNAME 50
 #define MIN_CONTRA 5
 #define MAX_CONTRA 20
+#define MIN_EMAIL 5
+#define MAX_EMAIL 50
 #define ARCHIVO_USUARIO "usuario.bin"
 //MENUS
 #define MENU_PRINCIPAL 1
@@ -18,7 +20,7 @@
 // Estructuras de Juegos, Usuarios, Administradores, Fechas y Torneos
 typedef struct stVideojuego
 {
-    char idJuego[10]; // C�digo �nico del juego (ej. "LOL", "CS2")
+    char idJuego[10]; 
     char nombre[50];
     char genero[30];
     char plataforma[20];
@@ -26,7 +28,7 @@ typedef struct stVideojuego
 
 typedef struct stUsuario
 {
-    char idUsuario[10]; // ID de jugador �nico
+    char idUsuario[10]; // ID de jugador único
     char nickname[30];
     char contrasenia[20];
     char email[50];
@@ -69,18 +71,30 @@ typedef struct stInscripcion
     Fecha fechaInscripcion;
 } Inscripcion;
 
-
+/* Administradores hardcodeados (los dos) */
+const Administrador a[] = {
+    {"EduProfe", "EduElMejor", "Eduardo Mango", "admin"},
+    {"Kevito", "kevin123", "Kevin", "admin"}
+};
+const int totalAdmins = sizeof(a) / sizeof(a[0]);
 
 ///PROTOTIPADO
 void funcionMenu(int menu);
+void loginAdministrador();
+int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]);
 int validacionContrasenia(char contrasenia[]);
 int validacionDeMail(char[]);
+int validaciondeNickname(char[]);
 Usuario crearUsuario();
 int guardarUsuario(Usuario, char[]);
+void loginUsuario();
+int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
+
 void mostrarUsuario(Usuario usuario);
 int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension);
-int redimensionarMemoriaUsuario(Usuario *x, int dim);
+int redimensionarMemoriaUsuario(Usuario **x, int dim);
 Usuario* asignarMemoriaUsuario(int dim);
+
 Torneo cargaTorneo(); //Llevar a Main -Fran
 int validacionIDTorneo(char idTorneo[]); //Llevar a Main -Fran
 void crearTorneo(Torneo torneo); //Llevar a Main -Fran
@@ -93,37 +107,21 @@ int validacionIDVideojuego(char idJuego[]);
 void modificarVideojuego(char idJuego[]);
 void verCatalogoVideojuegos();
 
-///prototipados juani
+/// prototipado juani
 void verInfoDetalladaUsuario();
 void verListadoUsuarios();
 void agregarModificarUsuario();
 
 
-
 int main()
 {
     funcionMenu(MENU_PRINCIPAL);
-    /*Usuario usuario=crearUsuario();
-    mostrarUsuario(usuario);
-    guardarUsuario(usuario, ARCHIVO_USUARIO);
-    int dimension=0; //Este esta bien que no sea puntero porque en la funcion solamente se manejara un puntero a un solo elemento (no es un arreglo)
-    Usuario* listaUsuarios=NULL; //Debe ser un puntero porque en la funcion ese puntero va a contener varios valores (sera un arreglo)
-    leerArchivoUsuario(ARCHIVO_USUARIO, listaUsuarios, &dimension);
-    printf("\ndimension actual es: %d\n", dimension);*/
-
-
-
-
-
-    //free(listaUsuarios);
-    //listaUsuarios=NULL;
     return 0;
 }
 
 void funcionMenu(int menu)
 {
-
-    system("cls");
+    system("cls"); // en sistemas *nix puede usarse "clear"
 
     int opcion=0;
 
@@ -152,6 +150,7 @@ void funcionMenu(int menu)
         }
 
         break;
+
     case MENU_USUARIO:
         printf("\n\tPresione la opcion que desea:\n");
         printf("\n\t[1]-Ingresar\n");
@@ -159,37 +158,39 @@ void funcionMenu(int menu)
         printf("\n\t[3]-Regresar al MENU PRINCIPAL\n");
         scanf("%d", &opcion);
         fflush(stdin);
-        if(opcion==1)
-        {
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+        if(opcion==1){
+            loginUsuario();
         }
-        if(opcion==2)
-        {
-            crearUsuario();
+        if(opcion==2){
+            Usuario u = crearUsuario();
+            // completar otros campos si se desea
+            guardarUsuario(u, ARCHIVO_USUARIO);
             funcionMenu(MENU_USUARIO);
         }
         if(opcion==3)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
-
         break;
+
     case MENU_ADMINISTRADOR:
         printf("\n\tPresione la opcion que desea:\n");
         printf("\n\t[1]-Ingresar\n");
         printf("\n\t[2]-Regresar al MENU PRINCIPAL\n");
         scanf("%d", &opcion);
         fflush(stdin);
-        if(opcion==1)
-        {
-            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);/// lo llevo a mi parte
+        if(opcion==1){
+            loginAdministrador();
+            /* Nota: en el código original se llamaba a funcionMenu(MENU_ADMINISTRADOR_LOGEADO)
+               inmediatamente después de loginAdministrador(); se mantiene ese comportamiento
+               para no alterar la lógica original (aunque loginAdministrador no fuerza entrar). */
+            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==2)
-        {
+        if(opcion==2){
             funcionMenu(MENU_PRINCIPAL);
         }
-
         break;
+
     case MENU_USUARIO_LOGEADO:
         printf("\n\tPresione la opcion que desea:\n");
         printf("\n\t[1]-Ver perfil\n");
@@ -201,7 +202,7 @@ void funcionMenu(int menu)
         scanf("%d", &opcion);
         if(opcion==1)
         {
-                printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }
         if(opcion==2)
         {
@@ -215,20 +216,18 @@ void funcionMenu(int menu)
         {
             printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }
-
-
         break;
+
     case MENU_ADMINISTRADOR_LOGEADO:
         printf("\n\tPresione la opcion que desea:\n");
         printf("\n\t[1]-Agregar torneo\n");
         printf("\n\t[2]-Modificar torneo\n");
-        printf("\n\t[3]-Modificar/Agregar Usuarios\n");
+        printf("\n\t[3]-Ver ganancias\n");
         printf("\n\t[4]-Ver usuarios\n");
-        printf("\n\t[5]-Ver usuario por ID\n");
-        printf("\n\t[6]-Agregar Videojuego\n");
-        printf("\n\t[7]-Modificar Videojuego\n");
-        printf("\n\t[8]-ver catalogo de Videojuegos\n");
-        printf("\n\t[9]-Cerrar sesion\n");
+        printf("\n\t[5]-Agregar Videojuego\n");
+        printf("\n\t[6]-Modificar Videojuego\n");
+        printf("\n\t[7]-ver catalogo de Videojuegos\n");
+        printf("\n\t[8]-Cerrar sesion\n");
         fflush(stdin);
         scanf("%d", &opcion);
         if(opcion==1)
@@ -244,56 +243,42 @@ void funcionMenu(int menu)
         }
         if (opcion==3)
         {
-           agregarModificarUsuario();
-
+            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }
         if (opcion==4)
         {
             verListadoUsuarios();
-
         }
-         if (opcion==5)
-        {
-            verInfoDetalladaUsuario();
-
-        }
-        /// parte echa por mi para mostrar a los chicos
-        if(opcion==6)
+        if (opcion==5)
         {
             Videojuego juego = cargaVideojuego();
             guardarVideojuego(juego);
         }
-        if (opcion==7)
+        if (opcion==6)
         {
             char idModificado[10];
             printf("ingrese ID del Videojuego a modificar: ");
             scanf("%s",idModificado);
             modificarVideojuego(idModificado);
         }
-        if (opcion==8)
+        if (opcion==7)
         {
             verCatalogoVideojuegos();
         }
-        if (opcion==9)
+        if (opcion==8)
         {
             printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
         }
-
-
         break;
+
     default:
         break;
     }
-
-
 }
-
-
 
 
 int validacionContrasenia(char contrasenia[])
 {
-
     int dimension=strlen(contrasenia);
     int esValido=1;
     if(dimension<MIN_CONTRA || dimension>MAX_CONTRA)
@@ -305,8 +290,7 @@ int validacionContrasenia(char contrasenia[])
     for(int i=0; i<dimension; i++)
     {
         caracterActual=contrasenia[i];
-        if(caracterActual=='1' || caracterActual=='2'|| caracterActual=='3'|| caracterActual=='4'|| caracterActual=='5'
-                || caracterActual=='6'|| caracterActual=='7'|| caracterActual=='8'|| caracterActual=='9'|| caracterActual=='0')
+        if(caracterActual>='0' && caracterActual<='9')
         {
             break;
         }
@@ -316,20 +300,11 @@ int validacionContrasenia(char contrasenia[])
             esValido=0;
         }
     }
-
-
     return esValido;
 }
 
-
-
 int validacionDeMail(char email[])
 {
-
-    //Esta es una funcion auxiliar para validar el mail, creamos una variable dimension para que guarde los datos del email
-    //cargado, con strlen podemos contar cuantos caracteres tiene. Luego se crea una variable "esValido" que la igualamos a 1.
-    //Hacemos un if donde validamos el tamaño, usamos || porque no pide que sean las dos condiciones al mismo tiempo.
-
     int dimension=strlen(email);
     int esValido=1;
     if(dimension<MIN_EMAIL || dimension>MAX_EMAIL)
@@ -337,47 +312,41 @@ int validacionDeMail(char email[])
         printf("\nEl email no cumple con la longitud de los requisitos, caracteres ingresados: %d\n", dimension);
         esValido=0;
     }
-
     return esValido;
 }
 
+int validaciondeNickname(char nickname[]){
+    int dimension=strlen(nickname);
+    int esValido=1;
+    if(dimension<MIN_NICKNAME || dimension>MAX_NICKNAME){
+        printf("\nEl nickname no cumple con la longitud de los requisitos, caracteres ingresados: %d\n", dimension);
+        esValido=0;
+    }
+    return esValido;
+}
 
-
-Usuario crearUsuario()
-{
-
-    //Funcion donde creamos el usuario, al comienzo hace un recordatorio de todas las condiciones para validar
-    //Creamos 3 variables, un char (para usar como condicion de corte en el do while) y dos variables de entero
-    //para igualar despues las funciones auxiliares. Realizo un do while porque mi intencion es que al menos
-    //el ciclo se haga una vez, hago un bucle tanto para el email como para la contraseña. Retorno el usuario.
-
+Usuario crearUsuario(){
     Usuario usuario;
-    printf("\nRecuerde que para registrarse, debe ingresar un email valido y una contrasenia que cumpla con los siguientes requisitos:\n");
+    printf("\nRecuerde que para registrarse, debe ingresar un nickname valido y una contrasenia que cumpla con los siguientes requisitos:\n");
     printf("-Caracteres minimo: 5\n");
-    printf("-Minimo una mayuscula\n");
     printf("-Minimo un numero\n");
 
     char control='s';
-    int valMail;
+    int valNickname;
     int valContra;
 
-    do
-    {
-        printf("\nIngrese su mail:\n");
+    do{
+        printf("\nIngrese su nickname:\n");
         fflush(stdin);
-        scanf("%s", usuario.email);
+        scanf("%s", usuario.nickname);
 
-        valMail=validacionDeMail(usuario.email);
-        if(valMail!=1)
-        {
-            printf("\nDesea ingresar otro mail? [s/n]\n");
+        valNickname=validaciondeNickname(usuario.nickname);
+        if(valNickname!=1){
+            printf("\nDesea ingresar otro nickname? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
-
         }
-    }
-    while((control=='s' || control=='S') && valMail!=1);
-
+    } while((control=='s' || control=='S') && valNickname!=1);
 
     do
     {
@@ -391,20 +360,15 @@ Usuario crearUsuario()
             printf("\nDesea ingresar otra contrasenia? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
-
         }
     }
     while((control=='s' || control=='S') && valContra!=1);
 
-
     return usuario;
 }
 
-
-
 int guardarUsuario(Usuario x, char archivo[])
 {
-
     printf("\nGuardando en archivo\n");
     FILE* usuarioArchivo=fopen(archivo, "ab");
 
@@ -417,13 +381,11 @@ int guardarUsuario(Usuario x, char archivo[])
     fwrite(&x, sizeof(Usuario), 1, usuarioArchivo);
 
     fclose(usuarioArchivo);
-
     return 1;
 }
 
 int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension)
 {
-
     printf("\nLeyendo el archivo\n");
     FILE* usuarioArchivo=fopen(archivo, "rb");
 
@@ -439,43 +401,30 @@ int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension)
 
     while(fread(&x, sizeof(Usuario), 1, usuarioArchivo)>0)
     {
-        printf("\nLeyendo linea %d\n", *dimension); //para que me lo tome como valor hay que agregarle *
+        printf("\nLeyendo linea %d\n", *dimension);
         mostrarUsuario(x);
-        /*if(redimensionarMemoriaUsuario(usuarios, (int)(*dimension))){
-            printf("\nLinea leida %d", *dimension);
-            usuarios[i]=x;
-            i++;
-            (*dimension)=i+1;
-        }*/
-
+        i++;
+        (*dimension)=i;
     }
 
     fclose(usuarioArchivo);
     return 1;
 }
 
-Usuario* asignarMemoriaUsuario(int dim)  //no es necesario la dimension con puntero porque el usuario te va a decir la dimension
+Usuario* asignarMemoriaUsuario(int dim)
 {
-
     Usuario* x_calloc=NULL;
-
     x_calloc=(Usuario*)calloc(dim, sizeof(Usuario));
-
     return x_calloc;
 }
 
-
-int redimensionarMemoriaUsuario(Usuario *x, int dim)
+int redimensionarMemoriaUsuario(Usuario **x, int dim)
 {
-
     int nuevaDim=dim;
-
-    Usuario* aux=(Usuario*)realloc(x, nuevaDim* sizeof(Usuario));
-
+    Usuario* aux=(Usuario*)realloc(*x, nuevaDim* sizeof(Usuario));
     if(aux!=NULL)
     {
-        x=aux;
-        dim=nuevaDim;
+        *x=aux;
         return 1;
     }
     else
@@ -483,26 +432,111 @@ int redimensionarMemoriaUsuario(Usuario *x, int dim)
         printf("\nError al redimensionar el arreglo\n");
         return 0;
     }
-
 }
 
 void mostrarUsuario(Usuario usuario)
 {
-
-    //Estoy mostrando todos los datos momentaneamente, solo para verificar que cargan bien
     printf("Usuario: %s\n", usuario.nickname);
     printf("ID: %s\n", usuario.idUsuario);
     printf("Email: %s\n", usuario.email);
     printf("Pais: %s\n", usuario.pais);
     printf("Contrasenia: %s\n", usuario.contrasenia);
     printf("Nivel: %d\n", usuario.nivel);
-
 }
 
+void loginUsuario(){
+    char contraseniaUsuario[20];
+    char usuario[20];
+    char control;
+    int valUsuario;
+
+    do{
+        printf("\n\tIngrese su usuario:\n");
+        fflush(stdin);
+        scanf("%s", usuario);
+
+        printf("\n\tIngrese su contrasenia\n");
+        fflush(stdin);
+        scanf("%s", contraseniaUsuario);
+
+        valUsuario=validacionUsuario(ARCHIVO_USUARIO, usuario, contraseniaUsuario);
+
+        if(valUsuario==1){
+            printf("\nUsted se ha logeado correctamente\n");
+        }else{
+            printf("\nError al ingresar datos\n");
+            printf("\nDesea intentarlo de nuevo? [s/n]\n");
+            fflush(stdin);
+            scanf(" %c", &control);
+        }
+
+    }while(control=='s' || control=='S');
+}
+
+int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]){
+    FILE * usuarioArchivo=fopen(archivo, "rb");
+
+    if(!usuarioArchivo){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 0;
+    }
+
+    Usuario u;
+
+    while(fread(&u, sizeof(Usuario), 1, usuarioArchivo)){
+        if(strcmp(usuario, u.nickname)==0){
+            if(strcmp(contraseniaUsuario, u.contrasenia)==0){
+                fclose(usuarioArchivo);
+                return 1;
+            }
+        }
+    }
+    fclose(usuarioArchivo);
+    return 0;
+}
+
+void loginAdministrador(){
+    char contraseniaAdmin[20];
+    char usuarioAdmin[20];
+    char control;
+    int valAdmin;
+    int validos = totalAdmins;
+    do{
+        printf("\n\tIngrese su usuario:\n");
+        fflush(stdin);
+        scanf("%s", usuarioAdmin);
+
+        printf("\n\tIngrese su contrasenia\n");
+        fflush(stdin);
+        scanf("%s", contraseniaAdmin);
+
+        valAdmin=validacionUsuarioAdmin(usuarioAdmin, validos, contraseniaAdmin);
+
+        if(valAdmin==1){
+            printf("\nUsted se ha logeado correctamente\n");
+        }else{
+            printf("\nError al ingresar datos\n");
+            printf("\nDesea intentarlo de nuevo? [s/n]\n");
+            fflush(stdin);
+            scanf(" %c", &control);
+        }
+
+    }while(control=='s' || control=='S');
+}
+
+int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]){
+    for(int i=0; i<validos; i++){
+        if(strcmp(usuarioAdmin, a[i].usuario)==0){
+            if(strcmp(contraseniaAdmin, a[i].contrasenia)==0){
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
 void crearTorneo(Torneo torneo)
 {
-
     FILE *ArchivoTorneo = fopen("torneos.bin", "ab");
     if(ArchivoTorneo == NULL)
     {
@@ -514,15 +548,11 @@ void crearTorneo(Torneo torneo)
     T = cargaTorneo();
     fwrite(&T, sizeof(Torneo), 1, ArchivoTorneo);
     fclose(ArchivoTorneo);
-
 }
-
 
 Torneo cargaTorneo()
 {
-    //Funcion para cargar los datos de un torneo nuevo
     Torneo T;
-
     printf("\nIngrese ID del torneo: \n");
     scanf("%s", T.idTorneo);
 
@@ -573,13 +603,12 @@ Torneo cargaTorneo()
     return T;
 }
 
-int validacionIDTorneo(char idTorneo[])  //Chequea que el ID no exista desde antes -Fran
+int validacionIDTorneo(char idTorneo[])
 {
     FILE *ArchivoTorneo = fopen("torneos.bin", "rb");
     if(ArchivoTorneo == NULL)
     {
-        printf("No se pudo abrir el archivo de torneos.\n");
-        return 1; // Si no se puede abrir el archivo, asumimos que el ID es válido
+        return 1; // Si no se puede abrir el archivo, asumimos que el ID es válido (no existen torneos)
     }
 
     Torneo T;
@@ -599,7 +628,7 @@ int validacionIDTorneo(char idTorneo[])  //Chequea que el ID no exista desde ant
     return esValido;
 }
 
-void modificarTorneo(char idTorneo[])  //MODULARIZAR O MEJORAR CON SWITCH PARA CADA CAMPO -F
+void modificarTorneo(char idTorneo[])
 {
     FILE *ArchivoTorneo = fopen("torneos.bin", "r+b");
     if(ArchivoTorneo == NULL)
@@ -659,7 +688,7 @@ void modificarTorneo(char idTorneo[])  //MODULARIZAR O MEJORAR CON SWITCH PARA C
             printf("Desea modificar el estado del torneo? S/N \n");
             fflush(stdin);
             scanf(" %c", &respuesta);
-            if (respuesta == 's' || respuesta == 'S')   //Se asegura que los profes no se pasen de vivos (<3) -Fran
+            if (respuesta == 's' || respuesta == 'S')
             {
                 int estadoValido = 0;
                 do
@@ -691,7 +720,8 @@ void modificarTorneo(char idTorneo[])  //MODULARIZAR O MEJORAR CON SWITCH PARA C
     }
     fclose(ArchivoTorneo);
 }
-/// aca funciones nuevas mati
+
+/// funciones de videojuegos (mati)
 int guardarVideojuego(Videojuego juego)
 {
     FILE* archivo = fopen("videojuegos.bin", "ab");
@@ -707,42 +737,16 @@ int guardarVideojuego(Videojuego juego)
     printf("Videojuego guardado correctamente.\n");
     return 0;
 }
-/*
-Videojuego cargaVideojuego()
-{
-    Videojuego juego;
-    printf("Ingrese ID del videojuego: ");
-    scanf("%s", juego.idJuego);
 
-    while (validacionIDVideojuego(juego.idJuego) == 1)
-    {
-        printf("ID existente. Ingrese otro: ");
-        scanf("%s", juego.idJuego);
-    }
-
-    printf("Ingrese nombre: ");
-    scanf("%s", juego.nombre);
-
-    printf("Ingrese genero: ");
-    scanf("%s", juego.genero);
-
-    printf("Ingrese plataforma: ");
-    scanf("%s", juego.plataforma);
-
-    return juego;
-}
-*/
 int tieneNumero(char cadena[])
 {
     int i = 0;
-
-    while (cadena[i] != '\0')  // mientras no termine la palabra
+    while (cadena[i] != '\0')
     {
         if (cadena[i] >= '0' && cadena[i] <= '9')
-            return 1; // tiene un número
+            return 1;
         i++;
     }
-
     return 0;
 }
 
@@ -752,18 +756,22 @@ Videojuego cargaVideojuego()
     int id;
     int control;
 
-do {
-    printf("Ingrese el ID: ");
-    control = scanf("%d", &id);
+    do {
+        printf("Ingrese el ID (numero): ");
+        control = scanf("%d", &id);
 
-    if (control == 0)
+        if (control == 0)
         {
-        printf("Error: debe ingresar un numero\n");
-        fflush(stdin);
-        getchar();
+            printf("Error: debe ingresar un numero\n");
+            fflush(stdin);
+            getchar();
         }
 
-} while (control == 0);
+    } while (control == 0);
+
+    // Nota: en el código original se leía idJuego desde string; mantenemos la validación de existencia:
+    printf("Ingrese ID como texto para almacenar (ej. '1' o 'G1'): ");
+    scanf("%s", juego.idJuego);
 
     while (validacionIDVideojuego(juego.idJuego))
     {
@@ -772,8 +780,7 @@ do {
     }
 
     printf("Ingrese nombre: ");
-    scanf("%s", juego.nombre);/// en el nombre no le pongo validacion ya que pueden aparecer juegos como minecraft 2
-
+    scanf("%s", juego.nombre);
 
     do
     {
@@ -786,7 +793,6 @@ do {
     }
     while (tieneNumero(juego.genero));
 
-
     do
     {
         printf("Nueva plataforma: ");
@@ -798,7 +804,6 @@ do {
     }
     while (tieneNumero(juego.plataforma));
 
-
     return juego;
 }
 
@@ -807,7 +812,7 @@ int validacionIDVideojuego(char idJuego[])
     FILE* archivo = fopen("videojuegos.bin", "rb");
     if (archivo == NULL)
     {
-        return 0; // basicamente el juego no esta repetido
+        return 0; // el juego no esta repetido
     }
 
     Videojuego aux;
@@ -816,16 +821,16 @@ int validacionIDVideojuego(char idJuego[])
         if (strcmp(aux.idJuego,idJuego) == 0)
         {
             fclose(archivo);
-            return 1; // si el juego ya existe osea esta repetido
+            return 1; // si el juego ya existe
         }
     }
 
     fclose(archivo);
     return 0;
 }
+
 void modificarVideojuego(char idJuego[])
 {
-
     FILE* archivo = fopen("videojuegos.bin", "rb+");
     if (archivo == NULL)
     {
@@ -902,6 +907,7 @@ void verCatalogoVideojuegos()
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Funciones agregadas por Juani: ver/listar/agregar/modificar usuarios (fusionadas)
 void agregarModificarUsuario()
 {
     Usuario u;
@@ -910,8 +916,10 @@ void agregarModificarUsuario()
 
     printf("Ingrese ID del Usuario: ");
     fflush(stdin);
-    scanf("%s", u.idUsuario);
-    
+    fgets(u.idUsuario, sizeof(u.idUsuario), stdin);
+    // quitar salto final si lo tiene
+    u.idUsuario[strcspn(u.idUsuario, "\n")] = '\0';
+
     FILE *buffer = fopen("usuario.bin", "r+b");
 
     if(buffer != NULL)
@@ -925,19 +933,23 @@ void agregarModificarUsuario()
 
                 printf("Ingrese nuevo nickname: ");
                 fflush(stdin);
-                scanf("%s", u.nickname);
+                fgets(aux.nickname, sizeof(aux.nickname), stdin);
+                aux.nickname[strcspn(aux.nickname, "\n")] = '\0';
 
                 printf("Ingrese nueva contrasenia: ");
                 fflush(stdin);
-                scanf("%s", u.contrasenia);
+                fgets(aux.contrasenia, sizeof(aux.contrasenia), stdin);
+                aux.contrasenia[strcspn(aux.contrasenia, "\n")] = '\0';
 
                 printf("Ingrese nuevo email: ");
                 fflush(stdin);
-                scanf("%s", u.email);
+                fgets(aux.email, sizeof(aux.email), stdin);
+                aux.email[strcspn(aux.email, "\n")] = '\0';
 
                 printf("Ingrese nuevo pais: ");
                 fflush(stdin);
-                scanf("%s", u.pais);
+                fgets(aux.pais, sizeof(aux.pais), stdin);
+                aux.pais[strcspn(aux.pais, "\n")] = '\0';
 
                 printf("Ingrese nuevo nivel: ");
                 scanf("%d", &aux.nivel);
@@ -958,19 +970,23 @@ void agregarModificarUsuario()
 
     printf("Ingrese nickname: ");
     fflush(stdin);
-    scanf("%s", u.nickname);
+    fgets(u.nickname, sizeof(u.nickname), stdin);
+    u.nickname[strcspn(u.nickname, "\n")] = '\0';
 
     printf("Ingrese contrasenia: ");
     fflush(stdin);
-    scanf("%s", u.contrasenia);
+    fgets(u.contrasenia, sizeof(u.contrasenia), stdin);
+    u.contrasenia[strcspn(u.contrasenia, "\n")] = '\0';
 
     printf("Ingrese email: ");
     fflush(stdin);
-    scanf("%s", u.email);
+    fgets(u.email, sizeof(u.email), stdin);
+    u.email[strcspn(u.email, "\n")] = '\0';
 
     printf("Ingrese pais: ");
     fflush(stdin);
-    scanf("%s", u.pais);
+    fgets(u.pais, sizeof(u.pais), stdin);
+    u.pais[strcspn(u.pais, "\n")] = '\0';
 
     printf("Ingrese nivel: ");
     scanf("%d", &u.nivel);
@@ -981,7 +997,6 @@ void agregarModificarUsuario()
 
     printf("\nUsuario agregado correctamente.\n");
 }
-
 
 void verListadoUsuarios()
 {
@@ -1012,7 +1027,8 @@ void verInfoDetalladaUsuario()
 
     printf("Ingrese el ID del usuario a buscar: ");
     fflush(stdin);
-    scanf("%s", idBuscado);
+    fgets(idBuscado, sizeof(idBuscado), stdin);
+    idBuscado[strcspn(idBuscado, "\n")] = '\0';
 
     FILE *buffer = fopen("usuario.bin", "rb");
     if(buffer == NULL)
