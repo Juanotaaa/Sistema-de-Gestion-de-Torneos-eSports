@@ -79,6 +79,7 @@ const Administrador a[] = {
 const int totalAdmins = sizeof(a) / sizeof(a[0]);
 
 ///PROTOTIPADO
+//prototipado de cande
 void funcionMenu(int menu);
 void loginAdministrador();
 int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]);
@@ -89,15 +90,14 @@ Usuario crearUsuario();
 int guardarUsuario(Usuario, char[]);
 void loginUsuario();
 int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
+void salirDeLaApp();
+void mostrarTorneos(Torneo t);
+int verListadoTorneos();
 
-void mostrarUsuario(Usuario usuario);
-int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension);
-int redimensionarMemoriaUsuario(Usuario **x, int dim);
-Usuario* asignarMemoriaUsuario(int dim);
-
+//prototipado de fran
 Torneo cargaTorneo(); //Llevar a Main -Fran
 int validacionIDTorneo(char idTorneo[]); //Llevar a Main -Fran
-void crearTorneo(Torneo torneo); //Llevar a Main -Fran
+void crearTorneo(); //Llevar a Main -Fran
 void modificarTorneo(char idTorneo[]); //Llevar a Main -Fran
 
 /// prototipado agregado por mati
@@ -132,6 +132,7 @@ void funcionMenu(int menu)
         printf("\n\tPresione la opcion que desea:\n");
         printf("\n\t[1]-Ingresar como usuario\n");
         printf("\n\t[2]-Ingresar como administrador\n");
+        printf("\n\t[3]-Salir\n");
         fflush(stdin);
         scanf("%d", &opcion);
         if(opcion==1)
@@ -142,7 +143,11 @@ void funcionMenu(int menu)
         {
             funcionMenu(MENU_ADMINISTRADOR);
         }
-        else
+        else if(opcion==3)
+        {
+            salirDeLaApp();
+
+        }else
         {
             printf("\n\tOpcion invalida, por favor ingrese una opcion correcta\n");
             system("pause");
@@ -180,7 +185,6 @@ void funcionMenu(int menu)
         fflush(stdin);
         if(opcion==1){
             loginAdministrador();
-            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
         if(opcion==2){
             funcionMenu(MENU_PRINCIPAL);
@@ -210,12 +214,13 @@ void funcionMenu(int menu)
         }
         if (opcion==4)
         {
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+            funcionMenu(MENU_PRINCIPAL);
         }
         break;
 
     case MENU_ADMINISTRADOR_LOGEADO:
         printf("\n\tPresione la opcion que desea:\n");
+        printf("\n\t[9]-Ver torneos\n");
         printf("\n\t[1]-Agregar torneo\n");
         printf("\n\t[2]-Modificar torneo\n");
         printf("\n\t[3]-Ver ganancias\n");
@@ -228,7 +233,7 @@ void funcionMenu(int menu)
         scanf("%d", &opcion);
         if(opcion==1)
         {
-            crearTorneo(cargaTorneo());
+            crearTorneo();
         }
         if(opcion==2)
         {
@@ -263,7 +268,12 @@ void funcionMenu(int menu)
         }
         if (opcion==8)
         {
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
+            funcionMenu(MENU_PRINCIPAL);
+        }
+        if (opcion==9)
+        {
+            verListadoTorneos();
+            
         }
         break;
 
@@ -272,7 +282,7 @@ void funcionMenu(int menu)
     }
 }
 
-
+//funciones de Cande
 int validacionContrasenia(char contrasenia[])
 {
     int dimension=strlen(contrasenia);
@@ -380,65 +390,8 @@ int guardarUsuario(Usuario x, char archivo[])
     return 1;
 }
 
-int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension)
-{
-    printf("\nLeyendo el archivo\n");
-    FILE* usuarioArchivo=fopen(archivo, "rb");
 
-    if(!usuarioArchivo)
-    {
-        printf("\nEl archivo no pudo abrirse\n");
-        return 0;
-    }
 
-    Usuario x;
-    int i=0;
-    (*dimension)=i+1;
-
-    while(fread(&x, sizeof(Usuario), 1, usuarioArchivo)>0)
-    {
-        printf("\nLeyendo linea %d\n", *dimension);
-        mostrarUsuario(x);
-        i++;
-        (*dimension)=i;
-    }
-
-    fclose(usuarioArchivo);
-    return 1;
-}
-
-Usuario* asignarMemoriaUsuario(int dim)
-{
-    Usuario* x_calloc=NULL;
-    x_calloc=(Usuario*)calloc(dim, sizeof(Usuario));
-    return x_calloc;
-}
-
-int redimensionarMemoriaUsuario(Usuario **x, int dim)
-{
-    int nuevaDim=dim;
-    Usuario* aux=(Usuario*)realloc(*x, nuevaDim* sizeof(Usuario));
-    if(aux!=NULL)
-    {
-        *x=aux;
-        return 1;
-    }
-    else
-    {
-        printf("\nError al redimensionar el arreglo\n");
-        return 0;
-    }
-}
-
-void mostrarUsuario(Usuario usuario)
-{
-    printf("Usuario: %s\n", usuario.nickname);
-    printf("ID: %s\n", usuario.idUsuario);
-    printf("Email: %s\n", usuario.email);
-    printf("Pais: %s\n", usuario.pais);
-    printf("Contrasenia: %s\n", usuario.contrasenia);
-    printf("Nivel: %d\n", usuario.nivel);
-}
 
 void loginUsuario(){
     char contraseniaUsuario[20];
@@ -510,15 +463,21 @@ void loginAdministrador(){
 
         if(valAdmin==1){
             printf("\nUsted se ha logeado correctamente\n");
+            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }else{
             printf("\nError al ingresar datos\n");
             printf("\nDesea intentarlo de nuevo? [s/n]\n");
+            printf("\nSi presiona n será dirigido al menu principal\n");
             fflush(stdin);
             scanf(" %c", &control);
+                if(control=='n' || control=='N'){
+                    funcionMenu(MENU_PRINCIPAL);
+                }
         }
 
     }while(control=='s' || control=='S');
 }
+    
 
 int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]){
     for(int i=0; i<validos; i++){
@@ -531,7 +490,50 @@ int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdm
     return 0;
 }
 
-void crearTorneo(Torneo torneo)
+void salirDeLaApp(){
+
+    printf("\nGracias por su visita a Nexus Arena, esperamos volver a verlo\n");
+
+}
+
+int verListadoTorneos(){
+
+    FILE* archivoTorneo=fopen("torneos.bin", "rb");
+
+    if(!archivoTorneo){
+        printf("\nNo se pudo ingresar al archivo en modo lectura\n");
+        system("pause");
+        funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+
+        return 0;
+    }
+
+    Torneo t;
+
+    while(fread(&t, sizeof(Torneo), 1, archivoTorneo)){
+
+        mostrarTorneos(t);
+
+    }
+
+}
+
+void mostrarTorneos(Torneo t){
+
+    printf("\nNombre: %s\n", t.nombre);
+    printf("\nID Torneo: %s\n", t.idTorneo);
+    printf("\nFecha de inicio: %d/%d/%d \n", t.fechaInicio.dia, t.fechaInicio.mes, t.fechaInicio.anio);
+    printf("\nCapacidad maxima: %d\n", t.capacidadMaxima);
+    printf("\nCupos disponibles: %d\n", t.cuposDisponibles);
+    printf("\nPremio: %d\n", t.premioTotal);
+    printf("\nEstado: %s\n", t.estado);
+
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//Funciones Fran
+void crearTorneo()
 {
     FILE *ArchivoTorneo = fopen("torneos.bin", "ab");
     if(ArchivoTorneo == NULL)
