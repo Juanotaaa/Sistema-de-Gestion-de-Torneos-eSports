@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "string.h"
 
-#define MIN_EMAIL 5
-#define MAX_EMAIL 50
+#define MIN_NICKNAME 5
+#define MAX_NICKNAME 50
 #define MIN_CONTRA 5
 #define MAX_CONTRA 20
 #define ARCHIVO_USUARIO "usuario.bin"
@@ -69,18 +69,28 @@ typedef struct stInscripcion
     Fecha fechaInscripcion;
 } Inscripcion;
 
+const Administrador a[]={{"EduProfe", "EduElMejor", "Eduardo Mango", "admin"}, {"Kevito", "kevin123", "Kevin", "admin"}};
 
 
 ///PROTOTIPADO
 void funcionMenu(int menu);
+void loginAdministrador();
+int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]);
 int validacionContrasenia(char contrasenia[]);
-int validacionDeMail(char[]);
+int validaciondeNickname(char[]);
 Usuario crearUsuario();
 int guardarUsuario(Usuario, char[]);
+void loginUsuario();
+int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
+
+
+/*
 void mostrarUsuario(Usuario usuario);
 int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension);
 int redimensionarMemoriaUsuario(Usuario *x, int dim);
 Usuario* asignarMemoriaUsuario(int dim);
+*/
+
 Torneo cargaTorneo(); //Llevar a Main -Fran
 int validacionIDTorneo(char idTorneo[]); //Llevar a Main -Fran
 void crearTorneo(Torneo torneo); //Llevar a Main -Fran
@@ -99,6 +109,7 @@ void verCatalogoVideojuegos();
 int main()
 {
     funcionMenu(MENU_PRINCIPAL);
+
     /*Usuario usuario=crearUsuario();
     mostrarUsuario(usuario);
     guardarUsuario(usuario, ARCHIVO_USUARIO);
@@ -146,21 +157,18 @@ void funcionMenu(int menu)
             system("pause");
             funcionMenu(MENU_PRINCIPAL);
         }
-
-        break;
-    case MENU_USUARIO:
-        printf("\n\tPresione la opcion que desea:\n");
-        printf("\n\t[1]-Ingresar\n");
-        printf("\n\t[2]-No tiene cuenta? Registrese aqui!\n");
-        printf("\n\t[3]-Regresar al MENU PRINCIPAL\n");
-        scanf("%d", &opcion);
-        fflush(stdin);
-        if(opcion==1)
-        {
-            printf("\nTodavia no hay funcion, REPARTIRSE LA TAREA!!");
-        }
-        if(opcion==2)
-        {
+        
+    break;
+case MENU_USUARIO:
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Ingresar\n");
+    printf("\n\t[2]-No tiene cuenta? Registrese aqui!\n");
+    printf("\n\t[3]-Regresar al MENU PRINCIPAL\n");
+    scanf("%d", &opcion);
+    fflush(stdin);
+        if(opcion==1){
+            loginUsuario();
+        }if(opcion==2){
             crearUsuario();
             funcionMenu(MENU_USUARIO);
         }
@@ -169,19 +177,17 @@ void funcionMenu(int menu)
             funcionMenu(MENU_PRINCIPAL);
         }
 
-        break;
-    case MENU_ADMINISTRADOR:
-        printf("\n\tPresione la opcion que desea:\n");
-        printf("\n\t[1]-Ingresar\n");
-        printf("\n\t[2]-Regresar al MENU PRINCIPAL\n");
-        scanf("%d", &opcion);
-        fflush(stdin);
-        if(opcion==1)
-        {
+break;
+case MENU_ADMINISTRADOR:
+    printf("\n\tPresione la opcion que desea:\n");
+    printf("\n\t[1]-Ingresar\n");
+    printf("\n\t[2]-Regresar al MENU PRINCIPAL\n");
+    scanf("%d", &opcion);
+    fflush(stdin);
+        if(opcion==1){
+            loginAdministrador();
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);/// lo llevo a mi parte
-        }
-        if(opcion==2)
-        {
+        }if(opcion==2){
             funcionMenu(MENU_PRINCIPAL);
         }
 
@@ -311,18 +317,12 @@ int validacionContrasenia(char contrasenia[])
 
 
 
-int validacionDeMail(char email[])
-{
+int validaciondeNickname(char nickname[]){
 
-    //Esta es una funcion auxiliar para validar el mail, creamos una variable dimension para que guarde los datos del email
-    //cargado, con strlen podemos contar cuantos caracteres tiene. Luego se crea una variable "esValido" que la igualamos a 1.
-    //Hacemos un if donde validamos el tamaño, usamos || porque no pide que sean las dos condiciones al mismo tiempo.
-
-    int dimension=strlen(email);
+    int dimension=strlen(nickname);
     int esValido=1;
-    if(dimension<MIN_EMAIL || dimension>MAX_EMAIL)
-    {
-        printf("\nEl email no cumple con la longitud de los requisitos, caracteres ingresados: %d\n", dimension);
+    if(dimension<MIN_NICKNAME || dimension>MAX_NICKNAME){
+        printf("\nEl nickname no cumple con la longitud de los requisitos, caracteres ingresados: %d\n", dimension);
         esValido=0;
     }
 
@@ -331,41 +331,31 @@ int validacionDeMail(char email[])
 
 
 
-Usuario crearUsuario()
-{
-
-    //Funcion donde creamos el usuario, al comienzo hace un recordatorio de todas las condiciones para validar
-    //Creamos 3 variables, un char (para usar como condicion de corte en el do while) y dos variables de entero
-    //para igualar despues las funciones auxiliares. Realizo un do while porque mi intencion es que al menos
-    //el ciclo se haga una vez, hago un bucle tanto para el email como para la contraseña. Retorno el usuario.
+Usuario crearUsuario(){
 
     Usuario usuario;
-    printf("\nRecuerde que para registrarse, debe ingresar un email valido y una contrasenia que cumpla con los siguientes requisitos:\n");
+    printf("\nRecuerde que para registrarse, debe ingresar un nickname valido y una contrasenia que cumpla con los siguientes requisitos:\n");
     printf("-Caracteres minimo: 5\n");
-    printf("-Minimo una mayuscula\n");
     printf("-Minimo un numero\n");
 
     char control='s';
-    int valMail;
-    int valContra;
+    int valNickname;
+    int valContra; 
 
-    do
-    {
-        printf("\nIngrese su mail:\n");
+    do{
+        printf("\nIngrese su nickname:\n");
         fflush(stdin);
-        scanf("%s", usuario.email);
+        scanf("%s", usuario.nickname);
 
-        valMail=validacionDeMail(usuario.email);
-        if(valMail!=1)
-        {
-            printf("\nDesea ingresar otro mail? [s/n]\n");
-            scanf(" %c", &control);
-            fflush(stdin);
+            valNickname=validaciondeNickname(usuario.nickname);
+            if(valNickname!=1){
+                printf("\nDesea ingresar otro nickname? [s/n]\n");
+                scanf(" %c", &control);
+                fflush(stdin);
 
-        }
-    }
-    while((control=='s' || control=='S') && valMail!=1);
-
+            }
+    } while((control=='s' || control=='S') && valNickname!=1);
+    
 
     do
     {
@@ -429,21 +419,73 @@ int leerArchivoUsuario(char archivo[], Usuario* usuarios, int*dimension)
     {
         printf("\nLeyendo linea %d\n", *dimension); //para que me lo tome como valor hay que agregarle *
         mostrarUsuario(x);
-        /*if(redimensionarMemoriaUsuario(usuarios, (int)(*dimension))){
-            printf("\nLinea leida %d", *dimension);
-            usuarios[i]=x;
-            i++;
-            (*dimension)=i+1;
-        }*/
-
+        //if(redimensionarMemoriaUsuario(usuarios, (int)(*dimension))){
+        //    printf("\nLinea leida %d", *dimension);
+        //    usuarios[i]=x;
+        //    i++;
+        //    (*dimension)=i+1;
+        
+        
     }
 
     fclose(usuarioArchivo);
     return 1;
 }
 
-Usuario* asignarMemoriaUsuario(int dim)  //no es necesario la dimension con puntero porque el usuario te va a decir la dimension
-{
+void loginUsuario(){
+
+    char contraseniaUsuario[20];
+    char usuario[20];
+    char control;
+    int valUsuario;
+
+    do{
+    printf("\n\tIngrese su usuario:\n");
+    fflush(stdin);
+    scanf("%s", usuario);
+
+    printf("\n\tIngrese su contrasenia\n");
+    fflush(stdin);
+    scanf("%s", contraseniaUsuario);
+
+    valUsuario=validacionUsuario(ARCHIVO_USUARIO, usuario, contraseniaUsuario);
+    
+        if(valUsuario==1){
+            printf("\nUsted se ha logeado correctamente\n");
+        }else{
+            printf("\nError al ingresar datos\n");
+            printf("\nDesea intentarlo de nuevo? [s/n]\n");
+            fflush(stdin);
+            scanf(" %c", &control);
+        }
+
+    }while(control=='s' || control=='S');
+
+}
+
+int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]){
+    
+    FILE * usuarioArchivo=fopen(archivo, "rb");
+
+    if(!usuarioArchivo){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 0;
+    }
+    
+    Usuario u;
+
+    while(fread(&u, sizeof(Usuario), 1, usuarioArchivo)){
+            if(strcmp(usuario, u.nickname)==0){
+                if(strcmp(contraseniaUsuario, u.contrasenia)==0){
+                    return 1;
+                }
+            }
+        }
+ 
+return 0;
+}
+
+/*Usuario* asignarMemoriaUsuario(int dim){ //no es necesario la dimension con puntero porque el usuario te va a decir la dimension
 
     Usuario* x_calloc=NULL;
 
@@ -474,17 +516,50 @@ int redimensionarMemoriaUsuario(Usuario *x, int dim)
 
 }
 
-void mostrarUsuario(Usuario usuario)
-{
+*/
 
-    //Estoy mostrando todos los datos momentaneamente, solo para verificar que cargan bien
-    printf("Usuario: %s\n", usuario.nickname);
-    printf("ID: %s\n", usuario.idUsuario);
-    printf("Email: %s\n", usuario.email);
-    printf("Pais: %s\n", usuario.pais);
-    printf("Contrasenia: %s\n", usuario.contrasenia);
-    printf("Nivel: %d\n", usuario.nivel);
+void loginAdministrador(){
 
+    char contraseniaAdmin[20];
+    char usuarioAdmin[20];
+    char control;
+    int valAdmin;
+    int validos=2;
+    do{
+    printf("\n\tIngrese su usuario:\n");
+    fflush(stdin);
+    scanf("%s", usuarioAdmin);
+
+    printf("\n\tIngrese su contrasenia\n");
+    fflush(stdin);
+    scanf("%s", contraseniaAdmin);
+
+    valAdmin=validacionUsuarioAdmin(usuarioAdmin, validos, contraseniaAdmin);
+    
+        if(valAdmin==1){
+            printf("\nUsted se ha logeado correctamente\n");
+        }else{
+            printf("\nError al ingresar datos\n");
+            printf("\nDesea intentarlo de nuevo? [s/n]\n");
+            fflush(stdin);
+            scanf(" %c", &control);
+        }
+
+    }while(control=='s' || control=='S');
+
+}
+
+int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]){
+    
+    for(int i=0; i<validos; i++){
+        if(strcmp(usuarioAdmin, a[i].usuario)==0){
+            if(strcmp(contraseniaAdmin, a[i].contrasenia)==0){
+            return 1;
+            }
+        }
+    }
+    
+return 0;
 }
 
 
