@@ -81,7 +81,8 @@ typedef struct
 const Administrador a[] =
 {
     {"EduProfe", "EduElMejor", "Eduardo Mango", "admin"},
-    {"Kevito", "kevin123", "Kevin", "admin"}
+    {"Kevito", "kevin123", "Kevin", "admin"},
+    {"Aye", "ayecrack", "Ayelen", "admin" }
 };
 const int totalAdmins = sizeof(a) / sizeof(a[0]);
 
@@ -107,7 +108,7 @@ int verListadoTorneos();
 //prototipado de torneos
 //prototipado de fran
 Torneo cargaTorneo(); //Llevar a Main -Fran
-int buscarTorneoPorID(char id[], Torneo* T, int* pos);
+int buscarTorneoPorID(char id[]);
 int validacionIDTorneo(char idTorneo[]); //Llevar a Main -Fran
 void crearTorneo(); //Llevar a Main -Fran
 Torneo modificarTorneo(Torneo idTorneo); //Llevar a Main -Fran
@@ -131,6 +132,7 @@ int validacionIDVideojuego(char idJuego[]);
 void modificarVideojuego(char idJuego[]);
 void verCatalogoVideojuegos();
 
+int buscarTorneoPorIDParaMati(char id[], Torneo *T, int *pos);
 int validarTorneoAbierto(Torneo T);
 int validarCupos(Torneo T);
 void registrarInscripcion();
@@ -645,48 +647,40 @@ void crearTorneo()
     fwrite(&T, sizeof(Torneo), 1, ArchivoTorneo);
     fclose(ArchivoTorneo);
 }
-int buscarTorneoPorID(char id[], Torneo *T, int *pos)
+int buscarTorneoPorID(char id[])
 {
-    int encontrado = 0;
-    FILE* archivo = fopen("torneos.bin", "rb+");
+    FILE* archivo = fopen("torneos.bin", "rb");
     if (!archivo)
-    {
         return 0;
-    }
 
     Torneo aux;
+
     while (fread(&aux, sizeof(Torneo), 1, archivo) == 1)
     {
         if (strcmp(aux.idTorneo, id) == 0)
         {
-            *T = aux;
-            *pos = ftell(archivo) - sizeof(Torneo);
-            encontrado = 1;
-            break;
+            fclose(archivo);
+            return 1; // Encontrado
         }
     }
 
     fclose(archivo);
-    return encontrado;
+    return 0;
 }
 
 Torneo cargaTorneo()
 {
     Torneo T;
     char id[10];
-    int pos;
 
+    // --- CONTROL DE ID ÚNICO ---
     printf("\nIngrese ID del torneo: \n");
     scanf("%9s", id);
 
-    int Existe = buscarTorneoPorID(id, &T, &pos);
-
-    while (Existe == 0)
+    while (buscarTorneoPorID(id) == 1)
     {
         printf("ID ya existente. Ingrese otro ID: \n");
         scanf("%9s", id);
-
-        Existe = buscarTorneoPorID(id, &T, &pos);
     }
 
     strcpy(T.idTorneo, id);
@@ -983,9 +977,9 @@ int buscarTorneo(char idTorneo[], Torneo* torneo){
 
 return 0;
 }
-void guardarListaTorneo(Torneo* listaTorneo, int dim){
-
-    FILE* ArchivoTorneo=fopen("torneo.bin", "wb");
+void guardarListaTorneo(Torneo* listaTorneo, int dim)
+{
+    FILE* ArchivoTorneo = fopen("torneos.bin", "wb");
 
     if(!ArchivoTorneo){
         printf("\nNo se pudo abrir el archivo\n");
@@ -995,8 +989,6 @@ void guardarListaTorneo(Torneo* listaTorneo, int dim){
     fwrite(listaTorneo, sizeof(Torneo), dim, ArchivoTorneo);
 
     fclose(ArchivoTorneo);
-
-return;
 }
 
 
@@ -1203,6 +1195,35 @@ int validarCupos(Torneo T)
 
     return validos;
 }
+
+int buscarTorneoPorIDParaMati(char id[], Torneo *T, int *pos)
+{
+    FILE* archivo = fopen("torneos.bin", "rb");
+    if(!archivo)
+        return 0;
+
+    Torneo aux;
+    int index = 0;   // número de registro dentro del archivo
+    long bytePos = 0;
+
+    while (fread(&aux, sizeof(Torneo), 1, archivo) == 1)
+    {
+        if (strcmp(aux.idTorneo, id) == 0)
+        {
+            *T = aux;
+            *pos = bytePos;          // POSICIÓN EN BYTES REAL
+            fclose(archivo);
+            return 1;
+        }
+
+        index++;
+        bytePos = index * sizeof(Torneo);
+    }
+
+    fclose(archivo);
+    return 0;
+}
+
 void registrarInscripcion()
 {
     int continuar = 1;
@@ -1216,7 +1237,7 @@ void registrarInscripcion()
     printf("Ingrese ID del torneo: ");
     scanf("%s", idTorneo);
 
-    if (!buscarTorneoPorID(idTorneo, &T, &posT))
+    if (!buscarTorneoPorIDParaMati(idTorneo, &T, &posT))
     {
         printf("No existe un torneo con ese ID.\n");
         continuar = 0;
@@ -1443,7 +1464,7 @@ void verParticipantesTorneo()
 
     Torneo T;
     int pos;
-    if (!buscarTorneoPorID(idTorneo, &T, &pos))
+    if (!buscarTorneoPorIDParaMati(idTorneo, &T, &pos))
     {
         printf("No existe un torneo con ese ID.\n");
         return;
