@@ -66,11 +66,12 @@ typedef struct stTorneo
 
 typedef struct stInscripcion
 {
-    char idInscripcion[30];
+    char idInscripcion[40];
     char idTorneo[10];
     char idUsuario[10];
     Fecha fechaInscripcion;
 } Inscripcion;
+
 
 /* Administradores hardcodeados (los dos) */
 const Administrador a[] =
@@ -109,11 +110,7 @@ int verListadoTorneos();
 Torneo cargaTorneo(); //Llevar a Main -Fran
 int validacionIDTorneo(char idTorneo[]); //Llevar a Main -Fran
 void crearTorneo(); //Llevar a Main -Fran
-Torneo modificarTorneo(Torneo idTorneo); //Llevar a Main -Fran
-int buscarTorneo(char idTorneo[], Torneo*torneo);
-//prototipado nuevo 
-Torneo * torneoArrDinamico(int*dim);
-int contarTorneos();
+void modificarTorneo(char idTorneo[]); //Llevar a Main -Fran
 
 /// prototipado agregado por mati
 int guardarVideojuego(Videojuego juego);
@@ -275,12 +272,7 @@ void funcionMenu(int menu)
             char idTorneo[10];
             printf("Ingrese el ID del torneo a modificar: ");
             scanf("%s", idTorneo);
-            Torneo T;
-            int torneoEncontrado=buscarTorneo(idTorneo, &T);
-            if(torneoEncontrado==1){
-                modificarTorneo(T);
-            }
-            
+            modificarTorneo(idTorneo);
         }
         if (opcion==4)
         {
@@ -597,22 +589,8 @@ int verListadoTorneos()
     }
 
 }
-
-void mostrarTorneos(Torneo t){
-
-    printf("\nNombre: %s\n", t.nombre);
-    printf("\nID Torneo: %s\n", t.idTorneo);
-    printf("\nFecha de inicio: %d/%d/%d \n", t.fechaInicio.dia, t.fechaInicio.mes, t.fechaInicio.anio);
-    printf("\nCupos disponibles: %d\n", t.cuposDisponibles);
-    printf("\nPremio: %d\n", t.premioTotal);
-    printf("\nEstado: %s\n", t.estado);
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//Funciones Fran
-void crearTorneo()
+//Funciones de Fran (Torneos)
+void crearTorneo(Torneo torneo)
 {
     FILE *ArchivoTorneo = fopen("torneos.bin", "ab");
     if(ArchivoTorneo == NULL)
@@ -664,7 +642,7 @@ Torneo cargaTorneo()
     printf("Ingrese fecha de inicio (dd mm aaaa): \n");
     scanf("%d %d %d", &T.fechaInicio.dia, &T.fechaInicio.mes, &T.fechaInicio.anio);
 
-    actualizarEstadoTorneo(&T);
+    actualizarEstadoTorneo(T);
 
     do
     {
@@ -677,6 +655,7 @@ Torneo cargaTorneo()
     }
     while (T.premioTotal < 1);
 
+    strcpy(T.estado, "Abierto");
 
     return T;
 }
@@ -708,7 +687,6 @@ void actualizarEstadoTorneo(Torneo *T)
         strcpy(T->estado, "Abierto");
     }
 }
-
 void mostrarTorneo(Torneo T)
 {
     printf("\n=== ID Torneo: %s ======\n", T.idTorneo);
@@ -746,40 +724,9 @@ int validacionIDTorneo(char idTorneo[])
     return esValido;
 }
 
-void modificarTorneoAEleccion(char idTorneo[]) //funcion intervenida por Cande
+void modificarTorneoAEleccion(char idTorneo[])
 {
-    int dim;
-    Torneo * listaTorneo=torneoArrDinamico(&dim);
-    
-    if(dim==0){
-        printf("\nNo existen torneos\n");
-        return;
-    }
-
-    Torneo T;
-    int encontrado = 0;
-
-    for(int i=0; i<dim; i++){
-
-        if(strcmp(listaTorneo[i].idTorneo, idTorneo) == 0)
-            {
-                encontrado = 1;
-                T = modificarTorneo(listaTorneo[i]);
-                listaTorneo[i]=T;
-                printf("Torneo modificado correctamente.\n");
-                break;
-            }
-
-    }
-
-    if(encontrado==0){
-        printf("\nNo se encontro el torneo especificado\n");
-        return;
-    }
-
-    guardarListaTorneo(&listaTorneo, dim);
-
-  /*  FILE *archivoTorneo = fopen("torneos.bin", "r+b");
+    FILE *archivoTorneo = fopen("torneos.bin", "r+b");
 
     if(archivoTorneo!=NULL)
     {
@@ -811,53 +758,6 @@ void modificarTorneoAEleccion(char idTorneo[]) //funcion intervenida por Cande
     {
         printf("No existe el archivo de torneos.\n");
     }
-     */
-}
-
-Torneo * torneoArrDinamico(int*dim){ //Funcion hecha por cande
-
-    int cant=contarTorneos();
-
-    Torneo* torneoArray=(Torneo*)calloc(cant, sizeof(Torneo));
-
-    *dim=cant;
-
-    FILE*ArchivoTorneo=fopen("torneo,bin", "rb");
-
-    if(!ArchivoTorneo){
-        printf("\nNo se pudo abrir el archivo en modo lectura\n");
-        return 0;
-    }
-
-    Torneo T;
-    int i=0;
-
-    while(fread(&T, sizeof(Torneo), 1, ArchivoTorneo)){
-        torneoArray[i]=T;
-    }
-    fclose(ArchivoTorneo);
-
-return torneoArray;
-}
-
-int contarTorneos(){
-
-    FILE*ArchivoTorneo=fopen("torneos.bin", "rb");
-
-    if(!ArchivoTorneo){
-        printf("\nNo se pudo abrir el torneo en modo lectura\n");
-        return 0;
-    }
-
-    Torneo T;
-    int cant=0;
-
-    while(fread(&T, sizeof(Torneo), 1, ArchivoTorneo)){
-        cant++;
-    }
-    fclose(ArchivoTorneo);
-
-return cant;
 }
 
 Torneo modificarTorneo(Torneo T)
@@ -939,49 +839,6 @@ void mostrarTorneosAbiertos(Torneo T)
 }
 
 
-int buscarTorneo(char idTorneo[], Torneo*torneo){
-
-    FILE* ArchivoTorneo=fopen("torneos.bin", "rb");
-
-    if(ArchivoTorneo == NULL)
-    {
-        printf("No se pudo abrir el archivo de torneos.\n");
-        return 0;
-    }
-
-
-    while(fread(torneo, sizeof(Torneo), 1, ArchivoTorneo)){
-
-        if(strcmp(idTorneo, torneo->idTorneo)==0){
-
-            return 1;
-        }
-        
-    }
-
-    fclose(ArchivoTorneo);
-
-return 0;
-}
-
-void guardarListaTorneo(Torneo* listaTorneo, int dim){
-
-    FILE* ArchivoTorneo=fopen("torneo.bin", "wb");
-
-    if(!ArchivoTorneo){
-        printf("\nNo se pudo abrir el archivo\n");
-        return;
-    }
-
-    fwrite(listaTorneo, sizeof(Torneo), dim, ArchivoTorneo);
-
-    fclose(ArchivoTorneo);
-
-return;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////
 /// funciones de videojuegos (mati)
 int guardarVideojuego(Videojuego juego)
 {
@@ -1017,22 +874,22 @@ Videojuego cargaVideojuego()
         scanf("%s", juego.idJuego);
         if(validacionIDVideojuego(juego.idJuego))
             printf("ID existente. Ingrese otro\n");
-    } while(validacionIDVideojuego(juego.idJuego) || strlen(juego.idJuego) >= 10);
+    } while(validacionIDVideojuego(juego.idJuego) || strlen(juego.idJuego) >= 9);
 
     do {
         printf("Ingrese nombre: ");
         scanf("%s", juego.nombre);
-    } while(strlen(juego.nombre) == 0 || strlen(juego.nombre) >= 50);
+    } while(strlen(juego.nombre) == 0 || strlen(juego.nombre) >= 49);
 
     do {
         printf("Ingrese genero: ");
         scanf("%s", juego.genero);
-    } while(tieneNumero(juego.genero) || strlen(juego.genero) == 0 || strlen(juego.genero) >= 30);
+    } while(tieneNumero(juego.genero) || strlen(juego.genero) == 0 || strlen(juego.genero) >= 29);
 
     do {
         printf("Ingrese plataforma: ");
         scanf("%s", juego.plataforma);
-    } while(tieneNumero(juego.plataforma) || strlen(juego.plataforma) == 0 || strlen(juego.plataforma) >= 20);
+    } while(tieneNumero(juego.plataforma) || strlen(juego.plataforma) == 0 || strlen(juego.plataforma) >= 19);
 
     return juego;
 }
@@ -1043,7 +900,6 @@ int validacionIDVideojuego(char idJuego[])
     FILE* archivo = fopen("videojuegos.bin", "rb");
       if(!archivo)
     {
-        printf("\nNo se pudo abrir el archivo en modo lectura\n");
         return 0;
     }
 
@@ -1089,8 +945,12 @@ void modificarVideojuego(char idJuego[])
                 if (tieneNumero(aux.genero))
                     printf("El genero no puede contener numeros.\n");
 
+                if (strlen(aux.genero) >= 29)
+                    printf("El genero es demasiado largo.\n");
+
             }
-            while (tieneNumero(aux.genero));
+            while(tieneNumero(aux.genero) || strlen(aux.genero) >= 29);
+
 
             do
             {
@@ -1100,7 +960,12 @@ void modificarVideojuego(char idJuego[])
                 if (tieneNumero(aux.plataforma))
                     printf("La plataforma no puede contener numeros.\n");
 
-            }while (tieneNumero(aux.plataforma));
+                if (strlen(aux.plataforma) >= 19)
+                    printf("La plataforma es demasiado larga.\n");
+
+            }
+            while(tieneNumero(aux.plataforma) || strlen(aux.plataforma) >= 19);
+
 
             fseek(archivo, -sizeof(Videojuego), SEEK_CUR);
             fwrite(&aux, sizeof(Videojuego), 1, archivo);
@@ -1139,7 +1004,6 @@ int buscarTorneoPorID(char id[], Torneo *T, int *pos)
     FILE* archivo = fopen("torneos.bin", "rb+");
     if (!archivo)
     {
-        printf("el archivo no se abrio correctamente \n");
         return 0;
     }
 
@@ -1164,7 +1028,6 @@ int buscarUsuarioPorID(char id[], Usuario *U)
     FILE* archivo = fopen("usuario.bin", "rb");
     if (!archivo)
     {
-        printf("el archivo no se abrio correctamente \n");
         return 0;
     }
 
@@ -1259,7 +1122,7 @@ void registrarInscripcion()
 
         strcpy(I.idTorneo, idTorneo);
         strcpy(I.idUsuario, idUsuario);
-        // Verificar si ya está inscrito
+        // Verificamos si ya está inscrito
         FILE* archIns = fopen("inscripciones.bin", "rb");
         if (archIns)
         {
@@ -1325,7 +1188,7 @@ void verParticipantesTorneo()
     FILE* archivo = fopen("inscripciones.bin", "rb");
     if (!archivo)
     {
-        printf("No se pudo abrir inscripciones.\n");
+        printf("No hay participantes inscritos.\n");
         return;
     }
 
@@ -1562,6 +1425,8 @@ void torneosSinParticipantes()
 
     fclose(archTorneos);
 }
+
+
 
 
 
