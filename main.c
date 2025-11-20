@@ -242,22 +242,31 @@ void funcionMenu(int menu)
         if(opcion==1)
         {
             mostrarPerfilUsuario(usuarioActual);
+            system("pause");
+            funcionMenu(MENU_USUARIO_LOGEADO);
         }
         if(opcion==2)
         {
             verTorneosAbiertosYCuposDisponibles();
+                        system("pause");
+            funcionMenu(MENU_USUARIO_LOGEADO);
         }
         if(opcion==3)
         {
             verCatalogoVideojuegos();
+                        system("pause");
+            funcionMenu(MENU_USUARIO_LOGEADO);
         }
         if(opcion==4)
         {
             registrarInscripcion();
+            system("pause");
+            funcionMenu(MENU_USUARIO_LOGEADO);
         }
         if(opcion==5)
         {
             hayUsuarioLogueado = 0;
+            system("pause");
             funcionMenu(MENU_PRINCIPAL);
         }
         if(opcion==6)
@@ -668,33 +677,35 @@ Torneo cargaTorneo()
     int pos;
 
     printf("\nIngrese ID del torneo: \n");
-    scanf("%s", id);
+    scanf("%9s", id);
 
     int Existe = buscarTorneoPorID(id, &T, &pos);
 
     while (Existe == 0)
     {
         printf("ID ya existente. Ingrese otro ID: \n");
-        scanf("%s", id);
+        scanf("%9s", id);
 
         Existe = buscarTorneoPorID(id, &T, &pos);
     }
 
+    strcpy(T.idTorneo, id);
+
     printf("Ingrese nombre del torneo: \n");
-    scanf("%s", T.nombre);
+    scanf("%49s", T.nombre);
 
     printf("Ingrese ID del juego: \n");
-    scanf("%s", T.juego.idJuego);
+    scanf("%9s", T.juego.idJuego);
 
     printf("Ingrese nombre del juego: (INGRESE NOMBRES SIN ESPACIOS) \n");
     fflush(stdin);
-    scanf("%s", T.juego.nombre);
+    scanf("%49s", T.juego.nombre);
 
     printf("Ingrese genero del juego: PVP, FPS, Battle Royale, Extract Shooter... \n");
-    scanf("%s", T.juego.genero);
+    scanf("%29s", T.juego.genero);
 
     printf("Ingrese plataforma del juego: PC/Xbox/Playstation (PS) \n");
-    scanf("%s", T.juego.plataforma);
+    scanf("%19s", T.juego.plataforma);
 
     printf("Ingrese capacidad maxima del torneo: \n");
     scanf("%d", &T.capacidadMaxima);
