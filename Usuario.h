@@ -20,9 +20,10 @@ typedef struct stUsuario
 ///PROTOTIPADOS
 int validacionContrasenia(char contrasenia[]);
 int validaciondeNickname(char nickname[]);
-Usuario crearUsuario();
+int crearUsuario(Usuario*u);
 int guardarUsuario(Usuario, char[]);
 int loginUsuario(Usuario *u, int * hayUsuarioLogueado);
 int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
+int validarUsuarioRepetido(char nickname[]);
 
 #endif

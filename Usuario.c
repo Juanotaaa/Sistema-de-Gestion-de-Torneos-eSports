@@ -34,17 +34,21 @@ int validaciondeNickname(char nickname[])
     int esValido=1;
     if(dimension<MIN_NICKNAME || dimension>MAX_NICKNAME)
     {
-        printf("\nEl nickname no cumple con la longitud de los requisitos, caracteres ingresados: %d\n", dimension);
+        printf("\nEl nombre de Usuario no cumple con la longitud de los requisitos, caracteres ingresados: %d\n", dimension);
         esValido=0;
     }
     return esValido;
 }
 
-Usuario crearUsuario()
+int crearUsuario(Usuario* u)
 {
-    Usuario usuario;
-    printf("\nRecuerde que para registrarse, debe ingresar un nickname valido y una contrasenia que cumpla con los siguientes requisitos:\n");
+    
+    printf("\nRecuerde que para registrarse, debe ingresar: un nombre de usuario que no este siendo utilizado y que cumpla con el siguiente requisito:\n");
     printf("-Caracteres minimo: 5\n");
+    printf("-Caracteres maximos: 8\n");
+    printf("\nAl mismo tiempo la contrasenia debera cumplir con los siguientes requisitos:\n");
+    printf("-Caracteres minimo: 5\n");
+    printf("-Caracteres maximos: 8\n");
     printf("-Minimo un numero\n");
 
     char control='s';
@@ -53,16 +57,24 @@ Usuario crearUsuario()
 
     do
     {
-        printf("\nIngrese su nickname:\n");
+        printf("\nIngrese su nombre de Usuario:\n");
         fflush(stdin);
-        scanf("%s", usuario.nickname);
+        scanf("%s", u->nickname);
 
-        valNickname=validaciondeNickname(usuario.nickname);
+        valNickname=validaciondeNickname(u->nickname);
         if(valNickname!=1)
         {
-            printf("\nDesea ingresar otro nickname? [s/n]\n");
+            printf("\nDesea ingresar otro nombre de Usuario? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
+        }else if(validarUsuarioRepetido(u->nickname)==0){
+            printf("\nDesea ingresar otro nombre de Usuario? [s/n]\n");
+            scanf(" %c", &control);
+            fflush(stdin);
+        }
+
+        if(control=='n' || control=='N'){
+            return 0;
         }
     }
     while((control=='s' || control=='S') && valNickname!=1);
@@ -71,20 +83,48 @@ Usuario crearUsuario()
     {
         printf("\nIngrese una contrasenia:\n");
         fflush(stdin);
-        scanf("%s", usuario.contrasenia);
+        scanf("%s", u->contrasenia);
 
-        valContra=validacionContrasenia(usuario.contrasenia);
+        valContra=validacionContrasenia(u->contrasenia);
         if(valContra!=1)
         {
             printf("\nDesea ingresar otra contrasenia? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
         }
+
+        if(control=='n' || control=='N'){
+            return 0;
+        }
+
     }
     while((control=='s' || control=='S') && valContra!=1);
 
-    return usuario;
+    return 1;
 }
+
+int validarUsuarioRepetido(char nickname[]){
+
+    FILE* ArchivoUsuario=fopen(ARCHIVO_USUARIO, "rb");
+
+    if (!ArchivoUsuario){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 1;
+    }
+    
+    Usuario u;
+    while(fread(&u, sizeof(Usuario), 1, ArchivoUsuario)){
+        if(strcmp(u.nickname, nickname)==0){
+            printf("\nEste nombre de Usuario ya esta siendo utilizado, por favor escoja otro\n");
+            return 0;
+        }
+    }
+
+    fclose(ArchivoUsuario);
+
+return 1;
+}
+
 
 int guardarUsuario(Usuario x, char archivo[])
 {
@@ -102,6 +142,8 @@ int guardarUsuario(Usuario x, char archivo[])
     fclose(usuarioArchivo);
     return 1;
 }
+
+
 int loginUsuario(Usuario *u, int* hayUsuarioLogueado)
 {
     char contraseniaUsuario[20];

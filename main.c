@@ -178,9 +178,14 @@ void funcionMenu(int menu)
         }
         if(opcion==2)
         {
-            Usuario u = crearUsuario();
-            guardarUsuario(u, ARCHIVO_USUARIO);
+            Usuario u;
+            int creacionExitosa=crearUsuario(&u); 
+            if(creacionExitosa==1){
+                printf("\nUsted se ha registrado correctamente\n");
+                guardarUsuario(u, ARCHIVO_USUARIO);
+            }
             funcionMenu(MENU_USUARIO);
+            
         }
         if(opcion==3)
         {
