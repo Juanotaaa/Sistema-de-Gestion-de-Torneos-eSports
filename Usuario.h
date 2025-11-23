@@ -25,5 +25,6 @@ int guardarUsuario(Usuario, char[]);
 int loginUsuario(Usuario *u, int * hayUsuarioLogueado);
 int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
 int validarUsuarioRepetido(char nickname[]);
+int idUsuario();
 
 #endif

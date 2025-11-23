@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
+const char **Paises={"Argentina", "Chile", "Uruguay", "Mexico", "Colombia", "Venezuela", 
+    "Peru", "Estados Unidos", "España", "Japon", "Italia", "Francia", "Portugal", "Otro"};
+const int cantPaises=4;
+
 int validacionContrasenia(char contrasenia[])
 {
     int dimension=strlen(contrasenia);
@@ -102,6 +106,32 @@ int crearUsuario(Usuario* u)
 
     return 1;
 }
+
+
+
+int idUsuario(){
+
+    FILE*ArchivoUsuario=fopen(ARCHIVO_USUARIO, "rb");
+
+    if(!ArchivoUsuario){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 1;
+    }
+
+    Usuario u;
+    int id=1;
+
+    while(fread(&u, sizeof(Usuario), 1, ArchivoUsuario)){
+        id++;
+    }
+
+    fclose(ArchivoUsuario);
+
+return id;
+}
+
+
+
 
 int validarUsuarioRepetido(char nickname[]){
 
