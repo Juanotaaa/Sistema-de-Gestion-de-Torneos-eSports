@@ -104,8 +104,14 @@ int crearUsuario(Usuario* u)
     }
     while((control=='s' || control=='S') && valContra!=1);
 
+    int id=idUsuario();
+    
+    sprintf(u->idUsuario, "%d", id);
+
     return 1;
 }
+
+
 
 
 
@@ -129,7 +135,6 @@ int idUsuario(){
 
 return id;
 }
-
 
 
 
