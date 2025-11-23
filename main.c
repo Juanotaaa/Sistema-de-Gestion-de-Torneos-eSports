@@ -182,6 +182,7 @@ void funcionMenu(int menu)
             int creacionExitosa=crearUsuario(&u); 
             if(creacionExitosa==1){
                 printf("\nUsted se ha registrado correctamente\n");
+                int infoExtra=agregarInformacionUsuario(&u);
                 guardarUsuario(u, ARCHIVO_USUARIO);
             }
             funcionMenu(MENU_USUARIO);
@@ -1152,7 +1153,7 @@ void agregarModificarUsuario()
 
                 printf("Ingrese nuevo email: ");
                 fflush(stdin);
-                gets(aux.email);
+                gets(aux.numTelefonico);
 
                 printf("Ingrese nuevo pais: ");
                 fflush(stdin);
@@ -1184,7 +1185,7 @@ void agregarModificarUsuario()
 
     printf("Ingrese email: ");
     fflush(stdin);
-    gets(u.email);
+    gets(u.numTelefonico);
 
     printf("Ingrese pais: ");
     fflush(stdin);
@@ -1261,7 +1262,7 @@ void verListadoUsuarios()
     while(fread(&u, sizeof(Usuario), 1, buffer) == 1)
     {
         printf("ID: %s | Nick: %s | Email: %s | Pais: %s | Nivel: %d\n",
-               u.idUsuario, u.nickname, u.email, u.pais, u.nivel);
+               u.idUsuario, u.nickname, u.numTelefonico, u.pais, u.nivel);
     }
     fclose(buffer);
 }
@@ -1271,7 +1272,7 @@ void mostrarPerfilUsuario(Usuario u)
     printf("\n--- PERFIL USUARIO ---\n");
     printf("ID: %s\n", u.idUsuario);
     printf("Nickname: %s\n", u.nickname);
-    printf("Email: %s\n", u.email);
+    printf("Email: %s\n", u.numTelefonico);
     printf("Pais: %s\n", u.pais);
     printf("Nivel: %d\n", u.nivel);
 }

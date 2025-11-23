@@ -4,7 +4,7 @@
 
 const char **Paises={"Argentina", "Chile", "Uruguay", "Mexico", "Colombia", "Venezuela", 
     "Peru", "Estados Unidos", "España", "Japon", "Italia", "Francia", "Portugal", "Otro"};
-const int cantPaises=4;
+const int cantPaises=14;
 
 int validacionContrasenia(char contrasenia[])
 {
@@ -105,13 +105,27 @@ int crearUsuario(Usuario* u)
     while((control=='s' || control=='S') && valContra!=1);
 
     int id=idUsuario();
-    
+
     sprintf(u->idUsuario, "%d", id);
 
     return 1;
 }
 
+int agregarInformacionUsuario(Usuario*info){
 
+    printf("\nPara poder continuar usted debera completar la siguiente informacion\n");
+    printf("\nUna vez completado estos datos, sera reenviado al MENU USUARIO\n");
+
+    printf("\nIngrese su pais\n");
+    fflush(stdin);
+    scanf("%s", info->pais);
+
+    printf("\nIngrese su numero telefonico\n");
+    fflush(stdin);
+    scanf("%s", info->numTelefonico);
+
+return 1;
+}
 
 
 

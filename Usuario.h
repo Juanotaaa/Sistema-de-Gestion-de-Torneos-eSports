@@ -12,7 +12,7 @@ typedef struct stUsuario
     char idUsuario[10];
     char nickname[30];
     char contrasenia[20];
-    char email[50];
+    char numTelefonico[50];
     char pais[30];
     int nivel;
 } Usuario;
@@ -26,5 +26,6 @@ int loginUsuario(Usuario *u, int * hayUsuarioLogueado);
 int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
 int validarUsuarioRepetido(char nickname[]);
 int idUsuario();
+int agregarInformacionUsuario(Usuario*info);
 
 #endif
