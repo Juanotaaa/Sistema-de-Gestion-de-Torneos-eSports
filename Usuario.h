@@ -6,6 +6,8 @@
 #define MIN_CONTRA 5
 #define MAX_CONTRA 20
 #define ARCHIVO_USUARIO "usuario.bin"
+#define MIN_TELEFONO 8
+#define MAX_TELEFONO 10
 
 typedef struct stUsuario
 {

@@ -181,9 +181,14 @@ void funcionMenu(int menu)
             Usuario u;
             int creacionExitosa=crearUsuario(&u); 
             if(creacionExitosa==1){
-                printf("\nUsted se ha registrado correctamente\n");
                 int infoExtra=agregarInformacionUsuario(&u);
+                if(infoExtra==1){
+                printf("\nUsted se ha registrado correctamente\n");
                 guardarUsuario(u, ARCHIVO_USUARIO);
+                }else{
+                    printf("\nUsted sera redirigido al MENU USUARIO\n");
+                    system("pause");
+                }
             }
             funcionMenu(MENU_USUARIO);
             

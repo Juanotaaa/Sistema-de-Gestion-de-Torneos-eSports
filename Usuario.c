@@ -116,17 +116,70 @@ int agregarInformacionUsuario(Usuario*info){
     printf("\nPara poder continuar usted debera completar la siguiente informacion\n");
     printf("\nUna vez completado estos datos, sera reenviado al MENU USUARIO\n");
 
+    char control='s';
+    int valNumTel;
+
     printf("\nIngrese su pais\n");
     fflush(stdin);
     scanf("%s", info->pais);
+    
 
-    printf("\nIngrese su numero telefonico\n");
-    fflush(stdin);
-    scanf("%s", info->numTelefonico);
+    
+   
+
+    do
+    {
+        printf("\nIngrese su numero telefonico\n");
+        fflush(stdin);
+        scanf("%s", info->numTelefonico);
+
+        valNumTel=validarNumTelefonico(info->numTelefonico);
+        if(valNumTel!=1)
+        {
+            printf("\nDesea ingresar otro numero telefonico? [s/n]\n");
+            scanf(" %c", &control);
+            fflush(stdin);
+        }
+
+        if(control=='n' || control=='N'){
+            return 0;
+        }
+
+    }
+    while((control=='s' || control=='S') && valNumTel!=1);
 
 return 1;
 }
 
+
+
+int validarNumTelefonico(char numTelefonico[]){
+
+    
+   int dimension=strlen(numTelefonico);
+    int esValido=1;
+    if(dimension<MIN_TELEFONO || dimension>MAX_TELEFONO)
+    {
+        printf("\nEl numero telefonico no cumple con la longitud esperada de un numero telefonico, caracteres ingresados: %d\n", dimension);
+        esValido=0;
+    }
+    char caracterActual;
+    for(int i=0; i<dimension; i++)
+    {
+        caracterActual=numTelefonico[i];
+        if(caracterActual>='0' && caracterActual<='9')
+        {
+            continue;
+        }
+        else
+        {
+            printf("\nEl numero telefonico es invalido, no olvide que solo puede ingresar numeros\n");
+            esValido=0;
+        }
+    }
+
+    return esValido;
+}
 
 
 int idUsuario(){
