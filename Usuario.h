@@ -2,9 +2,9 @@
 #define USUARIO_H
 
 #define MIN_NICKNAME 5
-#define MAX_NICKNAME 50
+#define MAX_NICKNAME 8
 #define MIN_CONTRA 5
-#define MAX_CONTRA 20
+#define MAX_CONTRA 8
 #define ARCHIVO_USUARIO "usuario.bin"
 #define MIN_TELEFONO 8
 #define MAX_TELEFONO 10

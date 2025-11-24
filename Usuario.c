@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const char **Paises={"Argentina", "Chile", "Uruguay", "Mexico", "Colombia", "Venezuela", 
+const char Paises[100][100]={"Argentina", "Chile", "Uruguay", "Mexico", "Colombia", "Venezuela", 
     "Peru", "Estados Unidos", "España", "Japon", "Italia", "Francia", "Portugal", "Otro"};
 const int cantPaises=14;
 
@@ -58,6 +58,7 @@ int crearUsuario(Usuario* u)
     char control='s';
     int valNickname;
     int valContra;
+    int valRepetido;
 
     do
     {
@@ -71,17 +72,21 @@ int crearUsuario(Usuario* u)
             printf("\nDesea ingresar otro nombre de Usuario? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
-        }else if(validarUsuarioRepetido(u->nickname)==0){
-            printf("\nDesea ingresar otro nombre de Usuario? [s/n]\n");
-            scanf(" %c", &control);
-            fflush(stdin);
+        }else{
+            valRepetido=validarUsuarioRepetido(u->nickname);
+            if(valRepetido!=1){
+                printf("\nDesea ingresar otro nombre de Usuario? [s/n]\n");
+                scanf(" %c", &control);
+                fflush(stdin);
+            }
+    
         }
 
         if(control=='n' || control=='N'){
             return 0;
         }
     }
-    while((control=='s' || control=='S') && valNickname!=1);
+    while((control=='s' || control=='S') && (valNickname!=1 || valRepetido!=1));
 
     do
     {
@@ -120,7 +125,6 @@ int agregarInformacionUsuario(Usuario*info){
     int valNumTel;
     int valPais;
 
-    
     do
     {
         printf("\nIngrese su pais\n");
@@ -130,6 +134,7 @@ int agregarInformacionUsuario(Usuario*info){
         valPais=validacionPaises(info->pais);
         if(valPais!=1)
         {
+            printf("\nEl pais ingresado no esta permitido en nuestros servidores\n");
             printf("\nDesea ingresar otro Pais? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
@@ -142,8 +147,6 @@ int agregarInformacionUsuario(Usuario*info){
     }
     while((control=='s' || control=='S') && valPais!=1);
 
-    
-   
 
     do
     {
@@ -175,7 +178,7 @@ int validacionPaises(char Pais[]){
 
     for(int i=0; i<cantPaises; i++)
     {
-        if(strcmp(Pais, *Paises[i])==0)
+        if(strcmp(Pais, Paises[i])==0)
         {
             return 1;
         }
