@@ -29,5 +29,7 @@ int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[])
 int validarUsuarioRepetido(char nickname[]);
 int idUsuario();
 int agregarInformacionUsuario(Usuario*info);
+int validarNumTelefonico(char numTelefonico[]);
+int validacionPaises(char Pais[]);
 
 #endif

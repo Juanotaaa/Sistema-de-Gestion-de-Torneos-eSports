@@ -118,11 +118,29 @@ int agregarInformacionUsuario(Usuario*info){
 
     char control='s';
     int valNumTel;
+    int valPais;
 
-    printf("\nIngrese su pais\n");
-    fflush(stdin);
-    scanf("%s", info->pais);
     
+    do
+    {
+        printf("\nIngrese su pais\n");
+        fflush(stdin);
+        scanf("%s", info->pais);
+
+        valPais=validacionPaises(info->pais);
+        if(valPais!=1)
+        {
+            printf("\nDesea ingresar otro Pais? [s/n]\n");
+            scanf(" %c", &control);
+            fflush(stdin);
+        }
+
+        if(control=='n' || control=='N'){
+            return 0;
+        }
+
+    }
+    while((control=='s' || control=='S') && valPais!=1);
 
     
    
@@ -149,6 +167,20 @@ int agregarInformacionUsuario(Usuario*info){
     while((control=='s' || control=='S') && valNumTel!=1);
 
 return 1;
+}
+
+
+
+int validacionPaises(char Pais[]){
+
+    for(int i=0; i<cantPaises; i++)
+    {
+        if(strcmp(Pais, *Paises[i])==0)
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 
