@@ -10,6 +10,9 @@
 #define MENU_ADMINISTRADOR 3
 #define MENU_USUARIO_LOGEADO 4
 #define MENU_ADMINISTRADOR_LOGEADO 5
+#define MENU_ADMINISTRADOR_TORNEOS 6
+#define MENU_ADMINISTRADOR_VIDEOJUEGOS 7
+#define MENU_ADMINISTRADOR_USUARIOS 8
 
 
 // Estructuras de Juegos, Usuarios, Administradores, Fechas y Torneos
@@ -197,6 +200,12 @@ void funcionMenu(int menu)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
+        else
+        {
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_USUARIO);
+        }
         break;
 
     case MENU_ADMINISTRADOR:
@@ -218,6 +227,12 @@ void funcionMenu(int menu)
         if(opcion==2)
         {
             funcionMenu(MENU_PRINCIPAL);
+        }
+        else
+        {
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_ADMINISTRADOR);
         }
         break;
 
@@ -265,23 +280,55 @@ void funcionMenu(int menu)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
+        else
+        {
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_USUARIO_LOGEADO);
+        }
         break;
 
     case MENU_ADMINISTRADOR_LOGEADO:
+        printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
+        printf("\n\t[1]-MENU TORNEOS\n");
+        printf("\n\t[2]-MENU VIDEOJUEGOS\n");
+        printf("\n\t[3]-MENU USUARIOS\n");
+        printf("\n\t[4]-Regresar al menu principal\n");
+        scanf("%d",&opcion);
+
+        if(opcion==1)
+        {
+            funcionMenu(MENU_ADMINISTRADOR_TORNEOS);
+        }
+        if(opcion==2)
+        {
+            funcionMenu(MENU_ADMINISTRADOR_VIDEOJUEGOS);
+        }
+        if(opcion==3)
+        {
+            funcionMenu(MENU_ADMINISTRADOR_USUARIOS);
+        }
+        if(opcion==4)
+        {
+            funcionMenu(MENU_PRINCIPAL);
+        }
+        else
+        {
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+        }
+        break;
+    
+    case MENU_ADMINISTRADOR_TORNEOS:
         printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
         printf("\n\t[1]-Ver torneos\n");
         printf("\n\t[2]-Crear torneo\n");
         printf("\n\t[3]-Modificar torneo\n");
         printf("\n\t[4]-Ver torneos abiertos\n");
-        printf("\n\t[5]-Cargar videojuego\n");
-        printf("\n\t[6]-Modificar videojuego\n");
-        printf("\n\t[7]-Ver catalogo videojuegos\n");
-        printf("\n\t[8]-Registrar inscripcion\n");
-        printf("\n\t[9]-Ver participantes de un torneo\n");
-        printf("\n\t[10]-Torneos sin participantes\n");
-        printf("\n\t[11]-Regresar al menu principal\n");
+        printf("\n\t[5]-Torneos sin participantes\n");
+        printf("\n\t[6]-Regresar al MENU ADMINISTRADOR\n");
         scanf("%d",&opcion);
-
         if(opcion==1)
         {
             verListadoTorneos();
@@ -291,6 +338,7 @@ void funcionMenu(int menu)
         if(opcion==2)
         {
             crearTorneo();
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
         if(opcion==3)
@@ -306,47 +354,97 @@ void funcionMenu(int menu)
         if(opcion==4)
         {
             verTorneosAbiertosYCuposDisponibles();
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
         if(opcion==5)
         {
-            Videojuego juego = cargaVideojuego();
-            guardarVideojuego(juego);
+            torneosSinParticipantes();
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
         if(opcion==6)
+        {
+            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+        }
+        else
+        {
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_ADMINISTRADOR_TORNEOS);
+        }
+        break;
+
+    case MENU_ADMINISTRADOR_VIDEOJUEGOS:
+        printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
+        printf("\n\t[1]-Cargar videojuego\n");
+        printf("\n\t[2]-Modificar videojuego\n");
+        printf("\n\t[3]-Ver catalogo videojuegos\n");
+        printf("\n\t[4]-Regresar al MENU ADMINISTRADOR\n");
+        scanf("%d",&opcion);
+        if(opcion==1)
+        {
+            Videojuego juego = cargaVideojuego();
+            guardarVideojuego(juego);
+            system("pause");
+            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+        }
+        if(opcion==2)
         {
             char idModificado[10];
             printf("Ingrese ID del videojuego a modificar: ");
             scanf("%s", idModificado);
             modificarVideojuego(idModificado);
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==7)
+        if(opcion==3)
         {
             verCatalogoVideojuegos();
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==8)
+        if(opcion==4)
+        {
+            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+        }
+        else
+        {
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_ADMINISTRADOR_VIDEOJUEGOS);
+        }
+    break;
+
+    case MENU_ADMINISTRADOR_USUARIOS:
+        printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
+        printf("\n\t[1]-Registrar inscripcion\n");
+        printf("\n\t[2]-Ver participantes de un torneo\n");
+        printf("\n\t[3]-Regresar al MENU ADMINISTRADOR\n");
+        scanf("%d",&opcion);
+         if(opcion==1)
         {
             registrarInscripcion();
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==9)
+        if(opcion==2)
         {
             verParticipantesTorneo();
+            system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==10)
+        if(opcion==3)
         {
-            torneosSinParticipantes();
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==11)
+        else
         {
-            funcionMenu(MENU_PRINCIPAL);
+            printf("\n\tOpcion invalida\n");
+            system("pause");
+            funcionMenu(MENU_ADMINISTRADOR_USUARIOS);
         }
-        break;
+    break;
 
     default:
         break;
