@@ -128,7 +128,7 @@ int agregarInformacionUsuario(Usuario*info){
 
     do
     {
-        printf("\nIngrese su pais\n");
+        printf("\nIngrese su pais (La primer letra tiene que ser en Mayuscula) \n");
         fflush(stdin);
         scanf("%s", info->pais);
 
