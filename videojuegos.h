@@ -17,6 +17,8 @@ void modificarVideojuego(int idJuego);
 void verCatalogoVideojuegos();
 int letrasYNumeros(char *cadena);
 int soloLetras(char *cadena);
+int existeVideojuego(char nombre[]);
 
 #endif // VIDEOJUEGOS_H_INCLUDED
+
 
