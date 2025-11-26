@@ -1094,7 +1094,7 @@ void mostrarPerfilUsuario(Usuario u)
     printf("\n--- PERFIL USUARIO ---\n");
     printf("ID: %s\n", u.idUsuario);
     printf("Nickname: %s\n", u.nickname);
-    printf("Email: %s\n", u.numTelefonico);
+    printf("Numero de Telefono : %s\n", u.numTelefonico);
     printf("Pais: %s\n", u.pais);
     printf("Nivel: %d\n", u.nivel);
 }
@@ -1114,4 +1114,5 @@ void verInfoDetalladaUsuario()
     {
         printf("Usuario no encontrado.\n");
     }
+
 }
