@@ -1,5 +1,6 @@
 #ifndef TORNEO_H
 #define TORNEO_H
+#include "videojuegos.h"
 
 typedef struct stFecha
 {
