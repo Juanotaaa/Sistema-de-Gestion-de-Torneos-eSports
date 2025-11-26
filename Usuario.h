@@ -31,5 +31,6 @@ int idUsuario();
 int agregarInformacionUsuario(Usuario*info);
 int validarNumTelefonico(char numTelefonico[]);
 int validacionPaises(char Pais[]);
+int validarNumTelefonicoRepetido(char* numTelefono);
 
 #endif

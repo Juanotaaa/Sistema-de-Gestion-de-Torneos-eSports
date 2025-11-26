@@ -92,7 +92,7 @@ void funcionMenu(int menu)
 {
     system("cls");
 
-    int opcion=0;
+    char opcion[100];
 
     switch (menu)
     {
@@ -103,17 +103,17 @@ void funcionMenu(int menu)
         printf("\n\t[2]-Ingresar como administrador\n");
         printf("\n\t[3]-Salir\n");
         fflush(stdin);
-        scanf("%d", &opcion);
+        scanf("%s", opcion);
 
-        if(opcion==1)
+        if(strcmp(opcion, "1")==0)
         {
             funcionMenu(MENU_USUARIO);
         }
-        else if(opcion==2)
+        else if(strcmp(opcion, "2")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR);
         }
-        else if(opcion==3)
+        else if(strcmp(opcion, "3")==0)
         {
             salirDeLaApp();
         }
@@ -130,10 +130,10 @@ void funcionMenu(int menu)
         printf("\n\t[1]-Ingresar\n");
         printf("\n\t[2]-No tiene cuenta? Registrese aqui!\n");
         printf("\n\t[3]-Regresar al MENU PRINCIPAL\n");
-        scanf("%d", &opcion);
+        scanf("%s", opcion);
         fflush(stdin);
 
-        if(opcion==1)
+        if(strcmp(opcion, "1")==0)
         {
            int loginExitoso=loginUsuario(&usuarioActual, &hayUsuarioLogueado);
            if(loginExitoso==1){
@@ -142,7 +142,7 @@ void funcionMenu(int menu)
             funcionMenu(MENU_PRINCIPAL);
            }
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             Usuario u;
             int creacionExitosa=crearUsuario(&u); 
@@ -159,7 +159,7 @@ void funcionMenu(int menu)
             funcionMenu(MENU_USUARIO);
             
         }
-        if(opcion==3)
+        if(strcmp(opcion, "3")==0)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
@@ -175,10 +175,10 @@ void funcionMenu(int menu)
         printf("\n\tPresione la opcion que desea:\n");
         printf("\n\t[1]-Ingresar\n");
         printf("\n\t[2]-Regresar al MENU PRINCIPAL\n");
-        scanf("%d", &opcion);
+        scanf("%s", opcion);
         fflush(stdin);
 
-        if(opcion==1)
+        if(strcmp(opcion, "1")==0)
         {
             int loginExitoso=loginAdministrador();
             if(loginExitoso==1){
@@ -187,7 +187,7 @@ void funcionMenu(int menu)
                 funcionMenu(MENU_PRINCIPAL);
             }
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
@@ -207,39 +207,39 @@ void funcionMenu(int menu)
         printf("\n\t[4]-Registrarme a un torneo\n");
         printf("\n\t[5]-Cerrar sesion\n");
         printf("\n\t[6]-Regresar al MENU PRINCIPAL\n");
-        scanf("%d",&opcion);
+        scanf("%s", opcion);
 
-        if(opcion==1)
+        if(strcmp(opcion, "1")==0)
         {
             mostrarPerfilUsuario(usuarioActual);
             system("pause");
             funcionMenu(MENU_USUARIO_LOGEADO);
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             verTorneosAbiertosYCuposDisponibles();
                         system("pause");
             funcionMenu(MENU_USUARIO_LOGEADO);
         }
-        if(opcion==3)
+        if(strcmp(opcion, "3")==0)
         {
             verCatalogoVideojuegos();
                         system("pause");
             funcionMenu(MENU_USUARIO_LOGEADO);
         }
-        if(opcion==4)
+        if(strcmp(opcion, "4")==0)
         {
             registrarInscripcion();
             system("pause");
             funcionMenu(MENU_USUARIO_LOGEADO);
         }
-        if(opcion==5)
+        if(strcmp(opcion, "5")==0)
         {
             hayUsuarioLogueado = 0;
             system("pause");
             funcionMenu(MENU_PRINCIPAL);
         }
-        if(opcion==6)
+        if(strcmp(opcion, "6")==0)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
@@ -257,21 +257,21 @@ void funcionMenu(int menu)
         printf("\n\t[2]-MENU VIDEOJUEGOS\n");
         printf("\n\t[3]-MENU USUARIOS\n");
         printf("\n\t[4]-Regresar al menu principal\n");
-        scanf("%d",&opcion);
+        scanf("%s", opcion);
 
-        if(opcion==1)
+        if(strcmp(opcion, "1")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR_TORNEOS);
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR_VIDEOJUEGOS);
         }
-        if(opcion==3)
+        if(strcmp(opcion, "3")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR_USUARIOS);
         }
-        if(opcion==4)
+        if(strcmp(opcion, "4")==0)
         {
             funcionMenu(MENU_PRINCIPAL);
         }
@@ -291,20 +291,20 @@ void funcionMenu(int menu)
         printf("\n\t[4]-Ver torneos abiertos\n");
         printf("\n\t[5]-Torneos sin participantes\n");
         printf("\n\t[6]-Regresar al MENU ADMINISTRADOR\n");
-        scanf("%d",&opcion);
-        if(opcion==1)
+        scanf("%s", opcion);
+        if(strcmp(opcion, "1")==0)
         {
             verListadoTorneos();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             crearTorneo();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==3)
+        if(strcmp(opcion, "3")==0)
         {
             char idTorneo[10];
             printf("Ingrese el ID del torneo a modificar: ");
@@ -314,19 +314,19 @@ void funcionMenu(int menu)
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
 
         }
-        if(opcion==4)
+        if(strcmp(opcion, "4")==0)
         {
             verTorneosAbiertosYCuposDisponibles();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==5)
+        if(strcmp(opcion, "5")==0)
         {
             torneosSinParticipantes();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==6)
+        if(strcmp(opcion, "6")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
@@ -344,15 +344,15 @@ void funcionMenu(int menu)
         printf("\n\t[2]-Modificar videojuego\n");
         printf("\n\t[3]-Ver catalogo videojuegos\n");
         printf("\n\t[4]-Regresar al MENU ADMINISTRADOR\n");
-        scanf("%d",&opcion);
-        if(opcion==1)
+        scanf("%s", opcion);
+        if(strcmp(opcion, "1")==0)
         {
             Videojuego juego = cargaVideojuego();
             guardarVideojuego(juego);
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             char idModificado[10];
             printf("Ingrese ID del videojuego a modificar: ");
@@ -361,13 +361,13 @@ void funcionMenu(int menu)
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==3)
+        if(strcmp(opcion, "3")==0)
         {
             verCatalogoVideojuegos();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==4)
+        if(strcmp(opcion, "4")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
@@ -384,20 +384,20 @@ void funcionMenu(int menu)
         printf("\n\t[1]-Registrar inscripcion\n");
         printf("\n\t[2]-Ver participantes de un torneo\n");
         printf("\n\t[3]-Regresar al MENU ADMINISTRADOR\n");
-        scanf("%d",&opcion);
-         if(opcion==1)
+        scanf("%s", opcion);
+         if(strcmp(opcion, "1")==0)
         {
             registrarInscripcion();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==2)
+        if(strcmp(opcion, "2")==0)
         {
             verParticipantesTorneo();
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
-        if(opcion==3)
+        if(strcmp(opcion, "3")==0)
         {
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         }
@@ -500,6 +500,7 @@ Torneo * torneoArrDinamico(int* dim){ //Funcion hecha por cande
 
 return torneoArray;
 }
+
 int contarTorneos(){
 
     FILE*ArchivoTorneo=fopen("torneos.bin", "rb");

@@ -124,6 +124,7 @@ int agregarInformacionUsuario(Usuario*info){
     char control='s';
     int valNumTel;
     int valPais;
+    int valNumTelRepetido;
 
     do
     {
@@ -160,6 +161,13 @@ int agregarInformacionUsuario(Usuario*info){
             printf("\nDesea ingresar otro numero telefonico? [s/n]\n");
             scanf(" %c", &control);
             fflush(stdin);
+        }else{
+            valNumTelRepetido=validarNumTelefonicoRepetido(info->numTelefonico);
+            if(valNumTelRepetido!=1){
+                printf("\nDesea ingresar otro numero telefonico? [s/n]\n");
+                scanf(" %c", &control);
+                fflush(stdin);
+            }
         }
 
         if(control=='n' || control=='N'){
@@ -167,7 +175,8 @@ int agregarInformacionUsuario(Usuario*info){
         }
 
     }
-    while((control=='s' || control=='S') && valNumTel!=1);
+    while((control=='s' || control=='S') && (valNumTel!=1 || valNumTelRepetido!=1));
+
 
 return 1;
 }
@@ -214,6 +223,26 @@ int validarNumTelefonico(char numTelefonico[]){
     }
 
     return esValido;
+}
+
+int validarNumTelefonicoRepetido(char* numTelefono){
+
+    FILE*ArchivoUsuario=fopen(ARCHIVO_USUARIO, "rb");
+
+    if(!ArchivoUsuario){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 1;
+    }
+
+    Usuario c;
+    while(fread(&c, sizeof(Usuario), 1, ArchivoUsuario)){
+        if(strcmp(numTelefono, c.numTelefonico)==0){
+            return 0;
+        }
+    }
+    fclose(ArchivoUsuario);
+
+return 1;
 }
 
 
