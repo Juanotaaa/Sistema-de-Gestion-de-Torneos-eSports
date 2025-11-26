@@ -77,7 +77,7 @@ Videojuego cargaVideojuego()
     }
     while (tieneNumero(juego.nombre) || !soloLetras(juego.nombre));
 
-    // Género
+    // Genero
     do
     {
         printf("Ingrese genero: ");
