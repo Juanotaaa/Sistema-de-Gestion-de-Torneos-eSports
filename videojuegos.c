@@ -69,7 +69,7 @@ Videojuego cargaVideojuego()
         printf("Ingrese genero: ");
         scanf("%29s", juego.genero);
         if (tieneNumero(juego.genero))
-            printf("ERROR: El g�nero no puede contener n�meros.\n");
+            printf("ERROR: El genero no puede contener numeros.\n");
     }
     while (tieneNumero(juego.genero) || strlen(juego.genero) == 0);
 
@@ -79,7 +79,7 @@ Videojuego cargaVideojuego()
         printf("Ingrese plataforma (PC | XBOX | PS4 | PS5): ");
         scanf("%19s", juego.plataforma);
         if (!validarPlataforma(juego.plataforma))
-            printf("ERROR: Plataforma inv�lida.\n");
+            printf("ERROR: Plataforma invalida.\n");
     }
     while (!validarPlataforma(juego.plataforma));
 

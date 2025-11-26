@@ -1,5 +1,6 @@
 #include "Torneo.h"
 #include "videojuegos.h"
+#include "videojuegos.c"
 #include <stdio.h>
 #include <string.h>
 
@@ -83,28 +84,37 @@ int buscarTorneoPorID(int id[])
     return 0;
 }
 
+void guardarTorneo(Torneo t)
+{
+    FILE *arch = fopen("torneos.dat", "ab");
+    fwrite(&t, sizeof(Torneo), 1, arch);
+    fclose(arch);
+}
+
 Torneo cargaTorneo()
 {
     Torneo T;
     int id[10];
 
 
-    // --- CONTROL DE ID ÚNICO ---
-    printf("\nIngrese ID del torneo: \n");
-    scanf("%d ", id);
+   Torneo t;
 
-    while (buscarTorneoPorID(id) == 1)
+    printf("\n=== CREAR NUEVO TORNEO ===\n");
+
+    t.idTorneo = obtenerProximoIDTorneo();
+    if (t.idTorneo == -1)
     {
-        printf("ID ya existente. Ingrese otro ID: \n");
-        scanf("%9s", id);
+        printf("Error al obtener el ID del torneo.\n");
+        return t;
     }
+    printf("ID asignado automaticamente: %d\n", t.idTorneo);
 
 
     printf("Ingrese nombre del torneo: \n");
     scanf("%49s", T.nombre);
 
-    printf("Ingrese ID del juego: \n");
-    scanf("%9s", T.juego.idJuego);
+    printf("Ingrese ID del juego: \n");//BORRAR UTILIZAR FUNCION DE VIDEOJUEGOS
+    scanf("%9s", T.juego.idJuego);//BORRAR UTILIZAR FUNCION DE VIDEOJUEGOS
 
     printf("Ingrese nombre del juego: (INGRESE NOMBRES SIN ESPACIOS) \n");
     fflush(stdin);
@@ -112,9 +122,33 @@ Torneo cargaTorneo()
 
     printf("Ingrese genero del juego: PVP, FPS, Battle Royale, Extract Shooter... \n");
     scanf("%29s", T.juego.genero);
+    do
+            {
+                printf("Nuevo genero: ");
+                scanf("%29s", aux.genero);
+                if (tieneNumero(aux.genero))
+                    printf("ERROR: El genero no puede contener numeros.\n");
+            }
+            while (tieneNumero(aux.genero) || strlen(aux.genero) == 0);
+    
+    if(strcmp(T.juego.genero, "PVP")!=0 && strcmp(T.juego.genero, "FPS")!=0 && strcmp(T.juego.genero, "Battle Royale")!=0 && strcmp(T.juego.genero, "Extract Shooter")!=0)
+    {
+        do {
+        printf("Ingrese un genero valido: PVP, FPS, Battle Royale, Extract Shooter \n");
+        scanf("%29s", T.juego.genero);
+        } while (strcmp(T.juego.genero, "PVP")!=0 && strcmp(T.juego.genero, "FPS")!=0 && strcmp(T.juego.genero, "Battle Royale")!=0 && strcmp(T.juego.genero, "Extract Shooter")!=0);
+    }
 
-    printf("Ingrese plataforma del juego: PC/Xbox/Playstation (PS) \n");
+    printf("Ingrese plataforma del juego: PC | Xbox | Playstation4(PS4) | Playstation5(PS5) \n");
     scanf("%19s", T.juego.plataforma);
+     do
+            {
+                printf("Nueva plataforma (PC | XBOX | PS4 | PS5): ");
+                scanf("%19s", aux.plataforma);
+                if (!validarPlataforma(aux.plataforma))
+                    printf("ERROR: Plataforma inv�lida.\n");
+            }
+            while (!validarPlataforma(aux.plataforma));
 
     printf("Ingrese capacidad maxima del torneo: \n");
     scanf("%d", &T.capacidadMaxima);
@@ -135,23 +169,23 @@ Torneo cargaTorneo()
 
     printf("\nIngrese el mes: ");
     scanf("%d", &T.fechaInicio.mes);
-     if( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) )
+     if( (T.fechaInicio.anio<1) && (T.fechaInicio.anio>12) )
     {
         do {
         printf("\n porfavor ingrese una fecha valida, si no su torneo figurara como cerrado \n");
         printf("Ingrese el mes: ");
         scanf("%d", &T.fechaInicio.mes);
-        } while ( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) );
+        } while ( (T.fechaInicio.anio<1) && (T.fechaInicio.anio>12) );
     }
     printf("Ingrese el dia: ");
     scanf("%d", &T.fechaInicio.dia);
-     if(T.fechaInicio.dia<0 && T.fechaInicio.dia>31)
+     if(T.fechaInicio.dia<1 && T.fechaInicio.dia>31)
     {
         do {
         printf("\n Porfavor ingrese una fecha valida. \n");
         printf("Ingrese el dia: ");
         scanf("%d", &T.fechaInicio.dia);
-        } while ( (T.fechaInicio.dia>0) && (T.fechaInicio.dia>31) );
+        } while ( (T.fechaInicio.dia>1) && (T.fechaInicio.dia>31) );
     }
     
 
@@ -288,6 +322,7 @@ Torneo modificarTorneo(Torneo T)
         {
             printf("Ingrese la nueva plataforma del juego \n");
             scanf("%19s", T.juego.plataforma);
+
         }
     printf("Desea modificar la capacidad maxima del torneo? S/N \n");
     fflush(stdin);
@@ -305,8 +340,7 @@ Torneo modificarTorneo(Torneo T)
         if (respuesta == 's' || respuesta == 'S')
         {
             printf("Ingrese nueva fecha de inicio (dd mm aaaa): \n");
-              printf("\nIngrese fecha de inicio (dd mm aaaa): \n");
-    printf("\nIngrese el año: ");
+     printf("\nIngrese el año: ");
     scanf("%d", &T.fechaInicio.anio);
     if(T.fechaInicio.anio<2025)
     {
@@ -319,7 +353,7 @@ Torneo modificarTorneo(Torneo T)
 
     printf("\nIngrese el mes: ");
     scanf("%d", &T.fechaInicio.mes);
-     if( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) )
+     if( (T.fechaInicio.anio<1) && (T.fechaInicio.anio>12) )
     {
         do {
         printf("\n porfavor ingrese una fecha valida, si no su torneo figurara como cerrado \n");
@@ -329,13 +363,13 @@ Torneo modificarTorneo(Torneo T)
     }
     printf("Ingrese el dia: ");
     scanf("%d", &T.fechaInicio.dia);
-     if(T.fechaInicio.dia<0 && T.fechaInicio.dia>31)
+     if(T.fechaInicio.dia<1 && T.fechaInicio.dia>31)
     {
         do {
         printf("\n Porfavor ingrese una fecha valida. \n");
         printf("Ingrese el dia: ");
         scanf("%d", &T.fechaInicio.dia);
-        } while ( (T.fechaInicio.dia>0) && (T.fechaInicio.dia>31) );
+        } while ( (T.fechaInicio.dia>1) && (T.fechaInicio.dia>31) );
     }
         }
         printf("Desea modificar el premio total del torneo? S/N \n");
