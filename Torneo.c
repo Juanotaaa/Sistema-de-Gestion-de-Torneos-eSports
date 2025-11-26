@@ -1,4 +1,5 @@
 #include "Torneo.h"
+#include "videojuegos.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -98,7 +99,6 @@ Torneo cargaTorneo()
         scanf("%9s", id);
     }
 
-    strcpy(T.idTorneo, id);
 
     printf("Ingrese nombre del torneo: \n");
     scanf("%49s", T.nombre);
@@ -216,7 +216,7 @@ void mostrarTorneos(Torneo t)
     mostrarTorneo(t);
 }
 
-void modificarTorneoAEleccion(int idTorneo[]) //funcion intervenida por Cande
+void modificarTorneoAEleccion(int idTorneo) //funcion intervenida por Cande
 {
     int dim;
     Torneo * listaTorneo=torneoArrDinamico(&dim);
@@ -378,7 +378,7 @@ void mostrarTorneosAbiertos(Torneo T)
 {
         if (strcmp(T.estado, "Abierto") == 0)
         {
-            printf("ID: %s | Nombre: %s | Juego: %s | Cupos Disponibles: %d\n", T.idTorneo, T.nombre, T.juego.nombre, T.cuposDisponibles);
+            printf("ID: %d | Nombre: %s | Juego: %s | Cupos Disponibles: %d\n", T.idTorneo, T.nombre, T.juego.nombre, T.cuposDisponibles);
         }else{
             printf("No hay torneos abiertos disponibles en este momento.\n");
         }
@@ -430,7 +430,7 @@ int contarTorneos(){
 return cant;
 }
 
-int buscarTorneo(char idTorneo[], Torneo* torneo){
+int buscarTorneo(int idTorneo, Torneo* torneo){
 
     FILE * ArchivoTorneo = fopen("torneos.bin", "rb");
 
@@ -443,7 +443,7 @@ int buscarTorneo(char idTorneo[], Torneo* torneo){
 
     while(fread(torneo, sizeof(Torneo), 1, ArchivoTorneo)){
 
-        if(strcmp(idTorneo, torneo->idTorneo)==0){
+        if(idTorneo == torneo->idTorneo){
 
             return 1;
         }
@@ -467,4 +467,49 @@ void guardarListaTorneo(Torneo* listaTorneo, int dim)
     fwrite(listaTorneo, sizeof(Torneo), dim, ArchivoTorneo);
 
     fclose(ArchivoTorneo);
+}
+
+void torneosSinParticipantes()
+{
+    FILE * archTorneos = fopen("torneos.bin", "rb");
+    if (!archTorneos)
+    {
+        printf("No se pudieron abrir los torneos.\n");
+        return;
+    }
+
+    Torneo T;
+    Inscripcion I;
+    int tieneParticipantes;
+
+    printf("\n=== Torneos abiertos sin participantes ===\n");
+
+    while (fread(&T, sizeof(Torneo), 1, archTorneos) == 1)
+    {
+        if (strcmp(T.estado, "Abierto") == 0)
+        {
+            tieneParticipantes = 0;
+
+            FILE * archIns = fopen("inscripciones.bin", "rb");
+            if (archIns)
+            {
+                while (fread(&I, sizeof(Inscripcion), 1, archIns) == 1)
+                {
+                    if (I.idTorneo == T.idTorneo)
+                    {
+                        tieneParticipantes = 1;
+                        break; // hay participante salimos
+                    }
+                }
+                fclose(archIns);
+            }
+
+            if (!tieneParticipantes)
+            {
+                printf("ID: %d | Nombre: %s | Juego: %s | Plataforma: %s | Cupos: %d\n",T.idTorneo, T.nombre, T.juego.nombre, T.juego.plataforma, T.cuposDisponibles);
+            }
+        }
+    }
+
+    fclose(archTorneos);
 }
