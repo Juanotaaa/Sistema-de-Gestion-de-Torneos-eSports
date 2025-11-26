@@ -2,6 +2,28 @@
 #include <stdio.h>
 #include <string.h>
 
+int verListadoTorneos()
+{
+    FILE* archivoTorneo=fopen("torneos.bin", "rb");
+
+    if(!archivoTorneo)
+    {
+        printf("\nNo se pudo ingresar al archivo en modo lectura\n");
+        system("pause");
+        funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+        return 0;
+    }
+
+    Torneo t;
+
+    while(fread(&t, sizeof(Torneo), 1, archivoTorneo))
+    {
+        mostrarTorneos(t);
+    }
+
+    fclose(archivoTorneo);
+    return 1;
+}
 
 void crearTorneo()
 {
@@ -17,7 +39,29 @@ void crearTorneo()
     fwrite(&T, sizeof(Torneo), 1, ArchivoTorneo);
     fclose(ArchivoTorneo);
 }
-int buscarTorneoPorID(char id[])
+
+int obtenerProximoIDTorneo()
+{
+    FILE *arch = fopen("ultimoIDTorneo.dat", "rb");
+    int ultimoID = 0;
+
+    if (arch)
+    {
+        fread(&ultimoID, sizeof(int), 1, arch);
+        fclose(arch);
+    }
+
+    ultimoID++;
+
+    arch = fopen("ultimoIDTorneo.dat", "wb");
+    fwrite(&ultimoID, sizeof(int), 1, arch);
+    fclose(arch);
+
+    return ultimoID;
+}
+
+
+int buscarTorneoPorID(int id[])
 {
     FILE* archivo = fopen("torneos.bin", "rb");
     if (!archivo)
@@ -27,7 +71,7 @@ int buscarTorneoPorID(char id[])
 
     while (fread(&aux, sizeof(Torneo), 1, archivo) == 1)
     {
-        if (strcmp(aux.idTorneo, id) == 0)
+        if (aux.idTorneo == id)
         {
             fclose(archivo);
             return 1; // Encontrado
@@ -41,11 +85,12 @@ int buscarTorneoPorID(char id[])
 Torneo cargaTorneo()
 {
     Torneo T;
-    char id[10];
+    int id[10];
+
 
     // --- CONTROL DE ID ÚNICO ---
     printf("\nIngrese ID del torneo: \n");
-    scanf("%9s", id);
+    scanf("%d ", id);
 
     while (buscarTorneoPorID(id) == 1)
     {
@@ -156,7 +201,7 @@ void actualizarEstadoTorneo(Torneo *T)
 
 void mostrarTorneo(Torneo T)
 {
-    printf("\n=== ID Torneo: %s ======\n", T.idTorneo);
+    printf("\n=== ID Torneo: %d ======\n", T.idTorneo);
     printf("\n=== Nombre: %s ===\n", T.nombre);
     printf("\n=== Juego: %s ===\n", T.juego.nombre);
     printf("\n=== Capacidad Maxima: %d ===\n", T.capacidadMaxima);
@@ -171,7 +216,7 @@ void mostrarTorneos(Torneo t)
     mostrarTorneo(t);
 }
 
-void modificarTorneoAEleccion(char idTorneo[]) //funcion intervenida por Cande
+void modificarTorneoAEleccion(int idTorneo[]) //funcion intervenida por Cande
 {
     int dim;
     Torneo * listaTorneo=torneoArrDinamico(&dim);
@@ -186,7 +231,7 @@ void modificarTorneoAEleccion(char idTorneo[]) //funcion intervenida por Cande
 
     for(int i=0; i<dim; i++){
 
-        if(strcmp(listaTorneo[i].idTorneo, idTorneo) == 0)
+        if(listaTorneo[i].idTorneo == idTorneo)
             {
                 encontrado = 1;
                 T = modificarTorneo(listaTorneo[i]);
@@ -307,4 +352,119 @@ Torneo modificarTorneo(Torneo T)
     system("pause");
     return T;
 
+}
+
+void verTorneosAbiertosYCuposDisponibles()
+{
+    FILE *ArchivoTorneo = fopen("torneos.bin", "rb");
+
+    if(ArchivoTorneo == NULL)
+    {
+        printf("No se pudo abrir el archivo de torneos.\n");
+        return;
+    }
+    Torneo T;
+
+    printf("\n=== TORNEOS ABIERTOS DISPONIBLES ===\n");
+    while((fread(&T, sizeof(Torneo), 1, ArchivoTorneo) > 0) && (T.cuposDisponibles > 0))
+    {
+        mostrarTorneosAbiertos(T);
+    }
+    fclose(ArchivoTorneo);
+    return;
+}
+
+void mostrarTorneosAbiertos(Torneo T)
+{
+        if (strcmp(T.estado, "Abierto") == 0)
+        {
+            printf("ID: %s | Nombre: %s | Juego: %s | Cupos Disponibles: %d\n", T.idTorneo, T.nombre, T.juego.nombre, T.cuposDisponibles);
+        }else{
+            printf("No hay torneos abiertos disponibles en este momento.\n");
+        }
+}
+
+Torneo * torneoArrDinamico(int* dim){ //Funcion hecha por cande
+
+    int cant = contarTorneos();
+
+    Torneo* torneoArray = (Torneo*)calloc(cant, sizeof(Torneo));
+
+    *dim = cant;
+
+    FILE * ArchivoTorneo=fopen("torneos.bin", "r+b");
+
+    if(!ArchivoTorneo){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 0;
+    }
+
+    Torneo T;
+    int i=0;
+
+    while(fread(&T, sizeof(Torneo), 1, ArchivoTorneo)){
+        torneoArray[i]=T;
+    }
+    fclose(ArchivoTorneo);
+
+return torneoArray;
+}
+
+int contarTorneos(){
+
+    FILE*ArchivoTorneo=fopen("torneos.bin", "rb");
+
+    if(!ArchivoTorneo){
+        printf("\nNo se pudo abrir el torneo en modo lectura\n");
+        return 0;
+    }
+
+    Torneo T;
+    int cant=0;
+
+    while(fread(&T, sizeof(Torneo), 1, ArchivoTorneo)){
+        cant++;
+    }
+    fclose(ArchivoTorneo);
+
+return cant;
+}
+
+int buscarTorneo(char idTorneo[], Torneo* torneo){
+
+    FILE * ArchivoTorneo = fopen("torneos.bin", "rb");
+
+    if(ArchivoTorneo == NULL)
+    {
+        printf("No se pudo abrir el archivo de torneos.\n");
+        return 0;
+    }
+
+
+    while(fread(torneo, sizeof(Torneo), 1, ArchivoTorneo)){
+
+        if(strcmp(idTorneo, torneo->idTorneo)==0){
+
+            return 1;
+        }
+
+    }
+
+    fclose(ArchivoTorneo);
+
+return 0;
+}
+
+void guardarListaTorneo(Torneo* listaTorneo, int dim)
+{
+    FILE* ArchivoTorneo = fopen("torneos.bin", "wb");
+
+    if(!ArchivoTorneo){
+        printf("\nNo se pudo abrir el archivo\n");
+        return;
+    }
+
+    fwrite(listaTorneo, sizeof(Torneo), dim, ArchivoTorneo);
+
+    fclose(ArchivoTorneo);
 }

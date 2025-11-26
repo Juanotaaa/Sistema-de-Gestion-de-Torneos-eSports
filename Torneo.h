@@ -1,6 +1,5 @@
 #ifndef TORNEO_H
 #define TORNEO_H
-#include "Videojuego.h"
 
 typedef struct stFecha
 {
@@ -11,7 +10,7 @@ typedef struct stFecha
 
 typedef struct stTorneo
 {
-    char idTorneo[10];
+    int idTorneo[10];
     char nombre[50];
     Videojuego juego;
     int capacidadMaxima;
@@ -24,18 +23,26 @@ typedef struct stTorneo
 //prototipado de torneos
 //prototipado de fran
 Torneo cargaTorneo(); 
-int buscarTorneoPorID(char id[]);
-int validacionIDTorneo(char idTorneo[]);    
+int verListadoTorneos();
+int buscarTorneoPorID(int idTorneo);
+int validacionIDTorneo(int idTorneo);    
 void crearTorneo(); 
-Torneo modificarTorneo(Torneo idTorneo); 
+void MostrarTorneo(Torneo T);
+Torneo modificarTorneo(int idTorneo); 
 int fechaUnica(Fecha f);
 int fechaAnterior(Fecha a, Fecha b);
 void actualizarEstadoTorneo(Torneo* T);
-void modificarTorneoAEleccion(char idTorneo[]);
+void modificarTorneoAEleccion(int idTorneo);
 void verTorneosAbiertosYCuposDisponibles();
 void mostrarTorneosAbiertos(Torneo T);
+void verParticipantesTorneo();
+void torneosSinParticipantes();
 //prototipado nuevo de modificaciones de cande
-int buscarTorneo(char idTorneo[], Torneo * torneo);
+int buscarTorneo(int idTorneo, Torneo * torneo);
 Torneo * torneoArrDinamico(int* dim);
 int contarTorneos();
 void guardarListaTorneo(Torneo* listaTorneo, int dim);
+void torneosSinParticipantes();
+int validarTorneoAbierto(Torneo T);
+
+#endif
