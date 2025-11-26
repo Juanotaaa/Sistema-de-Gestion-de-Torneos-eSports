@@ -1,4 +1,3 @@
-
 #include "Torneo.h"
 #include <stdio.h>
 #include <string.h>
@@ -77,8 +76,39 @@ Torneo cargaTorneo()
 
     T.cuposDisponibles = T.capacidadMaxima;
 
-    printf("Ingrese fecha de inicio (dd mm aaaa): \n");
-    scanf("%d %d %d", &T.fechaInicio.dia, &T.fechaInicio.mes, &T.fechaInicio.anio);
+    printf("\nIngrese fecha de inicio (dd mm aaaa): \n");
+    printf("\nIngrese el año: ");
+    scanf("%d", &T.fechaInicio.anio);
+    if(T.fechaInicio.anio<2025)
+    {
+        do {
+        printf("\n Ingrese una fecha valida, si no su torneo figurara como cerrado \n");
+        printf("Ingrese el año: ");
+        scanf("%d", &T.fechaInicio.anio);
+        } while (T.fechaInicio.anio<2025);
+    }
+
+    printf("\nIngrese el mes: ");
+    scanf("%d", &T.fechaInicio.mes);
+     if( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) )
+    {
+        do {
+        printf("\n porfavor ingrese una fecha valida, si no su torneo figurara como cerrado \n");
+        printf("Ingrese el mes: ");
+        scanf("%d", &T.fechaInicio.mes);
+        } while ( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) );
+    }
+    printf("Ingrese el dia: ");
+    scanf("%d", &T.fechaInicio.dia);
+     if(T.fechaInicio.dia<0 && T.fechaInicio.dia>31)
+    {
+        do {
+        printf("\n Porfavor ingrese una fecha valida. \n");
+        printf("Ingrese el dia: ");
+        scanf("%d", &T.fechaInicio.dia);
+        } while ( (T.fechaInicio.dia>0) && (T.fechaInicio.dia>31) );
+    }
+    
 
     actualizarEstadoTorneo(&T);
 
@@ -230,8 +260,38 @@ Torneo modificarTorneo(Torneo T)
         if (respuesta == 's' || respuesta == 'S')
         {
             printf("Ingrese nueva fecha de inicio (dd mm aaaa): \n");
-             scanf("%d %d %d", &T.fechaInicio.dia, &T.fechaInicio.mes, &T.fechaInicio.anio);
-             actualizarEstadoTorneo(&T);
+              printf("\nIngrese fecha de inicio (dd mm aaaa): \n");
+    printf("\nIngrese el año: ");
+    scanf("%d", &T.fechaInicio.anio);
+    if(T.fechaInicio.anio<2025)
+    {
+        do {
+        printf("\n Ingrese una fecha valida, si no su torneo figurara como cerrado \n");
+        printf("Ingrese el año: ");
+        scanf("%d", &T.fechaInicio.anio);
+        } while (T.fechaInicio.anio<2025);
+    }
+
+    printf("\nIngrese el mes: ");
+    scanf("%d", &T.fechaInicio.mes);
+     if( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) )
+    {
+        do {
+        printf("\n porfavor ingrese una fecha valida, si no su torneo figurara como cerrado \n");
+        printf("Ingrese el mes: ");
+        scanf("%d", &T.fechaInicio.mes);
+        } while ( (T.fechaInicio.anio<0) && (T.fechaInicio.anio>12) );
+    }
+    printf("Ingrese el dia: ");
+    scanf("%d", &T.fechaInicio.dia);
+     if(T.fechaInicio.dia<0 && T.fechaInicio.dia>31)
+    {
+        do {
+        printf("\n Porfavor ingrese una fecha valida. \n");
+        printf("Ingrese el dia: ");
+        scanf("%d", &T.fechaInicio.dia);
+        } while ( (T.fechaInicio.dia>0) && (T.fechaInicio.dia>31) );
+    }
         }
         printf("Desea modificar el premio total del torneo? S/N \n");
         fflush(stdin);
