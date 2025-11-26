@@ -15,7 +15,8 @@ Videojuego cargaVideojuego();
 int guardarVideojuego(Videojuego juego);
 void modificarVideojuego(int idJuego);
 void verCatalogoVideojuegos();
-int tieneNumero(char cadena[]);
+int letrasYNumeros(char *cadena);
 int soloLetras(char *cadena);
 
 #endif // VIDEOJUEGOS_H_INCLUDED
+
