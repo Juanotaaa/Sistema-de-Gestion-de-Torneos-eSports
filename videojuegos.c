@@ -3,7 +3,7 @@
 #include <string.h>
 #include "videojuegos.h"
 
-// VALIDAR QUE NO HAYA Nï¿½MEROS
+// VALIDAR QUE NO HAYA NÚMEROS
 int tieneNumero(char cadena[])
 {
     int i = 0;
@@ -16,7 +16,21 @@ int tieneNumero(char cadena[])
     return 0;
 }
 
-// GENERAR ID AUTOMï¿½TICO PARA VIDEOJUEGO
+// VALIDAR QUE SOLO HAYA LETRAS (sin símbolos ni números)
+int soloLetras(char *cadena)
+{
+    for (int i = 0; cadena[i] != '\0'; i++)
+    {
+        if (!((cadena[i] >= 'A' && cadena[i] <= 'Z') ||
+              (cadena[i] >= 'a' && cadena[i] <= 'z')))
+        {
+            return 0; // símbolo inválido
+        }
+    }
+    return 1;
+}
+
+// GENERAR ID AUTOMÁTICO PARA VIDEOJUEGO
 int generarIDVideojuego()
 {
     FILE* archivo = fopen("videojuegos.bin", "rb");
@@ -51,27 +65,27 @@ Videojuego cargaVideojuego()
 {
     Videojuego juego;
     juego.idJuego = generarIDVideojuego();
-    printf("ID asignado automï¿½ticamente: %d\n", juego.idJuego);
+    printf("ID asignado automáticamente: %d\n", juego.idJuego);
 
     // Nombre
     do
     {
         printf("Ingrese nombre: ");
         scanf("%49s", juego.nombre);
-        if (tieneNumero(juego.nombre))
-            printf("ERROR: El nombre no puede contener nï¿½meros.\n");
+        if (tieneNumero(juego.nombre) || !soloLetras(juego.nombre))
+            printf("ERROR: El nombre no puede contener números ni símbolos.\n");
     }
-    while (tieneNumero(juego.nombre) || strlen(juego.nombre) == 0);
+    while (tieneNumero(juego.nombre) || !soloLetras(juego.nombre));
 
-    // Gï¿½nero
+    // Género
     do
     {
-        printf("Ingrese genero: ");
+        printf("Ingrese género: ");
         scanf("%29s", juego.genero);
-        if (tieneNumero(juego.genero))
-            printf("ERROR: El gï¿½nero no puede contener nï¿½meros.\n");
+        if (tieneNumero(juego.genero) || !soloLetras(juego.genero))
+            printf("ERROR: El género no puede contener números ni símbolos.\n");
     }
-    while (tieneNumero(juego.genero) || strlen(juego.genero) == 0);
+    while (tieneNumero(juego.genero) || !soloLetras(juego.genero));
 
     // Plataforma
     do
@@ -79,7 +93,7 @@ Videojuego cargaVideojuego()
         printf("Ingrese plataforma (PC | XBOX | PS4 | PS5): ");
         scanf("%19s", juego.plataforma);
         if (!validarPlataforma(juego.plataforma))
-            printf("ERROR: Plataforma invï¿½lida.\n");
+            printf("ERROR: Plataforma inválida.\n");
     }
     while (!validarPlataforma(juego.plataforma));
 
@@ -127,20 +141,20 @@ void modificarVideojuego(int idJuego)
             {
                 printf("Nuevo nombre: ");
                 scanf("%49s", aux.nombre);
-                if (tieneNumero(aux.nombre))
-                    printf("ERROR: El nombre no puede contener nï¿½meros.\n");
+                if (tieneNumero(aux.nombre) || !soloLetras(aux.nombre))
+                    printf("ERROR: El nombre no puede contener números ni símbolos.\n");
             }
-            while (tieneNumero(aux.nombre) || strlen(aux.nombre) == 0);
+            while (tieneNumero(aux.nombre) || !soloLetras(aux.nombre));
 
-            // Nuevo gï¿½nero
+            // Nuevo género
             do
             {
-                printf("Nuevo genero: ");
+                printf("Nuevo género: ");
                 scanf("%29s", aux.genero);
-                if (tieneNumero(aux.genero))
-                    printf("ERROR: El gï¿½nero no puede contener nï¿½meros.\n");
+                if (tieneNumero(aux.genero) || !soloLetras(aux.genero))
+                    printf("ERROR: El género no puede contener números ni símbolos.\n");
             }
-            while (tieneNumero(aux.genero) || strlen(aux.genero) == 0);
+            while (tieneNumero(aux.genero) || !soloLetras(aux.genero));
 
             // Nueva plataforma
             do
@@ -148,7 +162,7 @@ void modificarVideojuego(int idJuego)
                 printf("Nueva plataforma (PC | XBOX | PS4 | PS5): ");
                 scanf("%19s", aux.plataforma);
                 if (!validarPlataforma(aux.plataforma))
-                    printf("ERROR: Plataforma invï¿½lida.\n");
+                    printf("ERROR: Plataforma inválida.\n");
             }
             while (!validarPlataforma(aux.plataforma));
 
@@ -162,7 +176,7 @@ void modificarVideojuego(int idJuego)
     }
 
     if (!encontrado)
-        printf("No se encontrï¿½ videojuego con ese ID.\n");
+        printf("No se encontró videojuego con ese ID.\n");
 
     fclose(archivo);
 }
@@ -186,3 +200,6 @@ void verCatalogoVideojuegos()
 
     fclose(archivo);
 }
+
+
+
