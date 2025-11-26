@@ -113,9 +113,6 @@ Torneo cargaTorneo()
     printf("Ingrese nombre del torneo: \n");
     scanf("%49s", T.nombre);
 
-    printf("Ingrese ID del juego: \n");//BORRAR UTILIZAR FUNCION DE VIDEOJUEGOS
-    scanf("%9s", T.juego.idJuego);//BORRAR UTILIZAR FUNCION DE VIDEOJUEGOS
-
     printf("Ingrese nombre del juego: (INGRESE NOMBRES SIN ESPACIOS) \n");
     fflush(stdin);
     scanf("%49s", T.juego.nombre);
@@ -298,6 +295,14 @@ Torneo modificarTorneo(Torneo T)
         {
             printf("Ingrese nuevo nombre del torneo: \n");
             scanf("%49s", T.nombre);
+            do
+    {
+        printf("Ingrese nombre: ");
+        scanf("%49s", juego.nombre);
+        if (tieneNumero(juego.nombre))
+            printf("ERROR: El nombre no puede contener n�meros.\n");
+    }
+    while (tieneNumero(juego.nombre) || strlen(juego.nombre) == 0);
         }
     printf("Desea modificar el nombre del juego? S/N \n");
     fflush(stdin);
@@ -314,6 +319,14 @@ Torneo modificarTorneo(Torneo T)
         {
             printf("Ingrese el nuevo genero del juego \n");
             scanf("%29s", T.juego.genero);
+            do
+    {
+        printf("Ingrese genero: ");
+        scanf("%29s", juego.genero);
+        if (tieneNumero(juego.genero))
+            printf("ERROR: El genero no puede contener numeros.\n");
+    }
+    while (tieneNumero(juego.genero) || strlen(juego.genero) == 0);
         }
         printf("Desea modificar la plataforma del juego? S/N \n");
     fflush(stdin);
@@ -322,6 +335,14 @@ Torneo modificarTorneo(Torneo T)
         {
             printf("Ingrese la nueva plataforma del juego \n");
             scanf("%19s", T.juego.plataforma);
+            do
+    {
+        printf("Ingrese plataforma (PC | XBOX | PS4 | PS5): ");
+        scanf("%19s", juego.plataforma);
+        if (!validarPlataforma(juego.plataforma))
+            printf("ERROR: Plataforma invalida.\n");
+    }
+    while (!validarPlataforma(juego.plataforma));
 
         }
     printf("Desea modificar la capacidad maxima del torneo? S/N \n");
