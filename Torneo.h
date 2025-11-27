@@ -21,6 +21,14 @@ typedef struct stTorneo
     char estado[15];
 } Torneo;
 
+typedef struct stInscripcion
+{
+    char idInscripcion[30];
+    char idTorneo[10];
+    char idUsuario[10];
+    Fecha fechaInscripcion;
+} Inscripcion;
+
 //prototipado de torneos
 //prototipado de fran
 Torneo cargaTorneo(); 
@@ -45,5 +53,6 @@ int contarTorneos();
 void guardarListaTorneo(Torneo* listaTorneo, int dim);
 void torneosSinParticipantes();
 int validarTorneoAbierto(Torneo T);
+void verParticipantesTorneo();
 
 #endif

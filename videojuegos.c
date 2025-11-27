@@ -87,7 +87,9 @@ int validarPlataforma(char *p)
 Videojuego cargaVideojuego()
 {
     Videojuego juego;
-    juego.idJuego = generarIDVideojuego();
+    char nombreJuego[50];
+    nombreJuego = generarIDVideojuego();
+    sprintf(juego.idJuego, "%d", nombreJuego)
     printf("ID asignado automaticamente: %d\n", juego.idJuego);
 
     // Nombre

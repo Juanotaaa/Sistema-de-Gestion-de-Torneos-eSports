@@ -12,7 +12,7 @@ int verListadoTorneos()
     {
         printf("\nNo se pudo ingresar al archivo en modo lectura\n");
         system("pause");
-        funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+        //funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         return 0;
     }   
 
@@ -95,7 +95,7 @@ void guardarTorneo(Torneo t)
 Torneo cargaTorneo()
 {
     Torneo T;
-    char idTorneo;
+    char idTorneo[10];
     idTorneo=obtenerProximoIDTorneo();
 
     printf("\n=== CREAR NUEVO TORNEO ===\n");
@@ -570,4 +570,49 @@ void torneosSinParticipantes()
     }
 
     fclose(archTorneos);
+}
+
+void verParticipantesTorneo()
+{
+    char idTorneo[10];
+    printf("Ingrese ID del torneo: ");
+    scanf("%s", idTorneo);
+
+    Torneo T;
+    int pos;
+    if (!buscarTorneoPorID(idTorneo))
+    {
+        printf("No existe un torneo con ese ID.\n");
+        return;
+    }
+
+    FILE* archivo = fopen("inscripciones.bin", "rb");
+    if (!archivo)
+    {
+        printf("No hay participantes inscritos.\n");
+        return;
+    }
+
+    Inscripcion I;
+    int encontrados = 0;
+
+    printf("\nParticipantes del torneo %s:\n", idTorneo);
+
+    while (fread(&I, sizeof(Inscripcion), 1, archivo) == 1)
+    {
+        if (strcmp(I.idTorneo, idTorneo) == 0)
+        {
+            Usuario U;
+            if (buscarUsuarioPorID(I.idUsuario, &U))
+            {
+                printf(" %s %s \n",U.nickname, U.idUsuario);
+                encontrados++;
+            }
+        }
+    }
+
+    fclose(archivo);
+
+    if (encontrados == 0)
+        printf("No hay participantes inscritos.\n");
 }

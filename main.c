@@ -18,13 +18,6 @@
 
 // Estructuras de Juegos, Usuarios, Administradores, Fechas y Torneos
 
-typedef struct stInscripcion
-{
-    char idInscripcion[30];
-    char idTorneo[10];
-    char idUsuario[10];
-    Fecha fechaInscripcion;
-} Inscripcion;
 
 typedef struct
 {
@@ -59,7 +52,6 @@ Videojuego cargaVideojuego();
 int validacionIDVideojuego(char idJuego[]);
 void verCatalogoVideojuegos();
 
-int buscarTorneoPorIDParaMati(char id[], Torneo *T, int *pos);
 int validarTorneoAbierto(Torneo T);
 int validarCupos(Torneo T);
 void registrarInscripcion();
@@ -487,7 +479,7 @@ void registrarInscripcion()
     printf("Ingrese ID del torneo: ");
     scanf("%s", idTorneo);
 
-    if (!buscarTorneoPorIDParaMati(idTorneo, &T, &posT))
+    if (!buscarTorneoPorID(idTorneo))
     {
         printf("No existe un torneo con ese ID.\n");
         continuar = 0;
@@ -590,7 +582,7 @@ void verParticipantesTorneo()
 
     Torneo T;
     int pos;
-    if (!buscarTorneoPorIDParaMati(idTorneo, &T, &pos))
+    if (!buscarTorneoPorID(idTorneo))
     {
         printf("No existe un torneo con ese ID.\n");
         return;
