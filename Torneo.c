@@ -14,7 +14,7 @@ int verListadoTorneos()
         system("pause");
         funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
         return 0;
-    }
+    }   
 
     Torneo t;
 
@@ -63,7 +63,7 @@ int obtenerProximoIDTorneo()
 }
 
 
-int buscarTorneoPorID(int id[])
+int buscarTorneoPorID(int id)
 {
     FILE* archivo = fopen("torneos.bin", "rb");
     if (!archivo)
@@ -114,20 +114,28 @@ Torneo cargaTorneo()
     scanf("%49s", T.nombre);
 
     printf("Ingrese nombre del juego: (INGRESE NOMBRES SIN ESPACIOS) \n");
-    fflush(stdin);
-    scanf("%49s", T.juego.nombre);
+    do
+    {
+        printf("Ingrese nombre (solo letras y numeros): ");
+        scanf("%49s", juego.nombre);
+        if (!letrasYNumeros(T.juego.nombre))
+            printf("ERROR: El nombre solo puede contener letras y numeros.\n");
+        else if (BuscarTorneoPorID(T.juego.nombre)==1)
+            printf("ERROR: Ya existe un videojuego con ese nombre.\n");
+
+    } while (!letrasYNumeros(T.juego.nombre));
 
     printf("Ingrese genero del juego: PVP, FPS, Battle Royale, Extract Shooter... \n");
     scanf("%29s", T.juego.genero);
     do
-            {
-                printf("Nuevo genero: ");
-                scanf("%29s", aux.genero);
-                if (tieneNumero(aux.genero))
-                    printf("ERROR: El genero no puede contener numeros.\n");
-            }
-            while (tieneNumero(aux.genero) || strlen(aux.genero) == 0);
-    
+    {
+        printf("Ingrese genero: ");
+        scanf("%29s", T.juego.genero);
+        if (!soloLetras(T.juego.genero))
+            printf("ERROR: El genero no puede contener numeros ni simbolos.\n");
+    }
+    while (!soloLetras(T.juego.genero));
+
     if(strcmp(T.juego.genero, "PVP")!=0 && strcmp(T.juego.genero, "FPS")!=0 && strcmp(T.juego.genero, "Battle Royale")!=0 && strcmp(T.juego.genero, "Extract Shooter")!=0)
     {
         do {
@@ -136,16 +144,15 @@ Torneo cargaTorneo()
         } while (strcmp(T.juego.genero, "PVP")!=0 && strcmp(T.juego.genero, "FPS")!=0 && strcmp(T.juego.genero, "Battle Royale")!=0 && strcmp(T.juego.genero, "Extract Shooter")!=0);
     }
 
-    printf("Ingrese plataforma del juego: PC | Xbox | Playstation4(PS4) | Playstation5(PS5) \n");
-    scanf("%19s", T.juego.plataforma);
-     do
-            {
-                printf("Nueva plataforma (PC | XBOX | PS4 | PS5): ");
-                scanf("%19s", aux.plataforma);
-                if (!validarPlataforma(aux.plataforma))
-                    printf("ERROR: Plataforma inv�lida.\n");
-            }
-            while (!validarPlataforma(aux.plataforma));
+    do
+    {
+        printf("Ingrese plataforma (PC | XBOX | PS4 | PS5): ");
+        scanf("%19s", T.juego.plataforma);
+        if (!validarPlataforma(T.juego.plataforma))
+            printf("ERROR: Plataforma invalida.\n");
+    }
+    while (!validarPlataforma(T.juego.plataforma));
+
 
     printf("Ingrese capacidad maxima del torneo: \n");
     scanf("%d", &T.capacidadMaxima);
@@ -298,11 +305,11 @@ Torneo modificarTorneo(Torneo T)
             do
     {
         printf("Ingrese nombre: ");
-        scanf("%49s", juego.nombre);
-        if (tieneNumero(juego.nombre))
-            printf("ERROR: El nombre no puede contener n�meros.\n");
+        scanf("%49s", T.juego.nombre);
+        if (tieneNumero(T.juego.nombre))
+            printf("ERROR: El nombre no puede contener numeros.\n");
     }
-    while (tieneNumero(juego.nombre) || strlen(juego.nombre) == 0);
+    while (tieneNumero(T.juego.nombre) || strlen(juego.nombre) == 0);
         }
     printf("Desea modificar el nombre del juego? S/N \n");
     fflush(stdin);
@@ -322,11 +329,11 @@ Torneo modificarTorneo(Torneo T)
             do
     {
         printf("Ingrese genero: ");
-        scanf("%29s", juego.genero);
-        if (tieneNumero(juego.genero))
+        scanf("%29s", T.juego.genero);
+        if (tieneNumero(T.juego.genero))
             printf("ERROR: El genero no puede contener numeros.\n");
     }
-    while (tieneNumero(juego.genero) || strlen(juego.genero) == 0);
+    while (tieneNumero(T.juego.genero) || strlen(T.juego.genero) == 0);
         }
         printf("Desea modificar la plataforma del juego? S/N \n");
     fflush(stdin);
@@ -338,8 +345,8 @@ Torneo modificarTorneo(Torneo T)
             do
     {
         printf("Ingrese plataforma (PC | XBOX | PS4 | PS5): ");
-        scanf("%19s", juego.plataforma);
-        if (!validarPlataforma(juego.plataforma))
+        scanf("%19s", T.juego.plataforma);
+        if (!validarPlataforma(T.juego.plataforma))
             printf("ERROR: Plataforma invalida.\n");
     }
     while (!validarPlataforma(juego.plataforma));
