@@ -44,22 +44,23 @@ void crearTorneo()
 
 int obtenerProximoIDTorneo()
 {
-    FILE *arch = fopen("ultimoIDTorneo.dat", "rb");
-    int ultimoID = 0;
+    FILE*ArchivoTorneo=fopen("torneos.bin", "rb");
 
-    if (arch)
-    {
-        fread(&ultimoID, sizeof(int), 1, arch);
-        fclose(arch);
+    if(!ArchivoTorneo){
+        printf("\nNo se pudo abrir el archivo en modo lectura\n");
+        return 1;
     }
 
-    ultimoID++;
+    Torneo t;
+    int id=1;
 
-    arch = fopen("ultimoIDTorneo.dat", "wb");
-    fwrite(&ultimoID, sizeof(int), 1, arch);
-    fclose(arch);
+    while(fread(&t, sizeof(Torneo), 1, ArchivoTorneo)){
+        id++;
+    }
 
-    return ultimoID;
+    fclose(ArchivoTorneo);
+
+return id;
 }
 
 
@@ -94,20 +95,15 @@ void guardarTorneo(Torneo t)
 Torneo cargaTorneo()
 {
     Torneo T;
-    int id[10];
-
-
-   Torneo t;
+    int idTorneo;
+    idTorneo=obtenerProximoIDTorneo();
 
     printf("\n=== CREAR NUEVO TORNEO ===\n");
+    
+    sprintf(T.idTorneo, "%d", idTorneo);
+    
 
-    t.idTorneo = obtenerProximoIDTorneo();
-    if (t.idTorneo == -1)
-    {
-        printf("Error al obtener el ID del torneo.\n");
-        return t;
-    }
-    printf("ID asignado automaticamente: %d\n", t.idTorneo);
+    printf("ID asignado automaticamente: %d\n", T.idTorneo);
 
 
     printf("Ingrese nombre del torneo: \n");
@@ -117,7 +113,7 @@ Torneo cargaTorneo()
     do
     {
         printf("Ingrese nombre (solo letras y numeros): ");
-        scanf("%49s", juego.nombre);
+        scanf("%49s", T.juego.nombre);
         if (!letrasYNumeros(T.juego.nombre))
             printf("ERROR: El nombre solo puede contener letras y numeros.\n");
         else if (BuscarTorneoPorID(T.juego.nombre)==1)
@@ -254,7 +250,7 @@ void mostrarTorneos(Torneo t)
     mostrarTorneo(t);
 }
 
-void modificarTorneoAEleccion(int idTorneo) //funcion intervenida por Cande
+void modificarTorneoAEleccion(char idTorneo[]) //funcion intervenida por Cande
 {
     int dim;
     Torneo * listaTorneo=torneoArrDinamico(&dim);
@@ -269,7 +265,7 @@ void modificarTorneoAEleccion(int idTorneo) //funcion intervenida por Cande
 
     for(int i=0; i<dim; i++){
 
-        if(listaTorneo[i].idTorneo == idTorneo)
+        if(strcmp(listaTorneo[i].idTorneo, idTorneo)==0)
             {
                 encontrado = 1;
                 T = modificarTorneo(listaTorneo[i]);
@@ -309,7 +305,7 @@ Torneo modificarTorneo(Torneo T)
         if (tieneNumero(T.juego.nombre))
             printf("ERROR: El nombre no puede contener numeros.\n");
     }
-    while (tieneNumero(T.juego.nombre) || strlen(juego.nombre) == 0);
+    while (tieneNumero(T.juego.nombre) || strlen(T.juego.nombre) == 0);
         }
     printf("Desea modificar el nombre del juego? S/N \n");
     fflush(stdin);
@@ -349,7 +345,7 @@ Torneo modificarTorneo(Torneo T)
         if (!validarPlataforma(T.juego.plataforma))
             printf("ERROR: Plataforma invalida.\n");
     }
-    while (!validarPlataforma(juego.plataforma));
+    while (!validarPlataforma(T.juego.plataforma));
 
         }
     printf("Desea modificar la capacidad maxima del torneo? S/N \n");

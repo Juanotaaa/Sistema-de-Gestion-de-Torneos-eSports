@@ -3,7 +3,7 @@
 #include <string.h>
 #include "videojuegos.h"
 
-// VALIDAR QUE SOLO HAYA LETRAS Y NUMEROS (sin símbolos)
+// VALIDAR QUE SOLO HAYA LETRAS Y NUMEROS (sin sï¿½mbolos)
 int letrasYNumeros(char *cadena)
 {
     for (int i = 0; cadena[i] != '\0'; i++)
@@ -12,13 +12,13 @@ int letrasYNumeros(char *cadena)
               (cadena[i] >= 'a' && cadena[i] <= 'z') ||
               (cadena[i] >= '0' && cadena[i] <= '9')))
         {
-            return 0; // símbolo invalido
+            return 0; // sï¿½mbolo invalido
         }
     }
     return 1;
 }
 
-// VALIDAR QUE SOLO HAYA LETRAS (sin símbolos ni números)
+// VALIDAR QUE SOLO HAYA LETRAS (sin sï¿½mbolos ni nï¿½meros)
 int soloLetras(char *cadena)
 {
     for (int i = 0; cadena[i] != '\0'; i++)
@@ -144,7 +144,7 @@ int guardarVideojuego(Videojuego juego)
 }
 
 // MODIFICAR VIDEOJUEGO
-void modificarVideojuego(int idJuego)
+void modificarVideojuego(char idJuego[])
 {
     FILE* archivo = fopen("videojuegos.bin", "rb+");
     if (!archivo)

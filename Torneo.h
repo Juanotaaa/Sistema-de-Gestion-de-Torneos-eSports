@@ -11,7 +11,7 @@ typedef struct stFecha
 
 typedef struct stTorneo
 {
-    int idTorneo[10];
+    char idTorneo[10];
     char nombre[50];
     Videojuego juego;
     int capacidadMaxima;
@@ -33,7 +33,7 @@ Torneo modificarTorneo(int idTorneo);
 int fechaUnica(Fecha f);
 int fechaAnterior(Fecha a, Fecha b);
 void actualizarEstadoTorneo(Torneo* T);
-void modificarTorneoAEleccion(int idTorneo);
+void modificarTorneoAEleccion(char idTorneo[]);
 void verTorneosAbiertosYCuposDisponibles();
 void mostrarTorneosAbiertos(Torneo T);
 void verParticipantesTorneo();

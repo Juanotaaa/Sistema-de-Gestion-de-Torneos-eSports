@@ -17,13 +17,6 @@
 
 
 // Estructuras de Juegos, Usuarios, Administradores, Fechas y Torneos
-typedef struct stVideojuego
-{
-    char idJuego[10];
-    char nombre[50];
-    char genero[30];
-    char plataforma[20];
-} Videojuego;
 
 typedef struct stInscripcion
 {
@@ -64,7 +57,6 @@ int guardarVideojuego(Videojuego juego);
 int tieneNumero(char cadena[]);
 Videojuego cargaVideojuego();
 int validacionIDVideojuego(char idJuego[]);
-void modificarVideojuego(char idJuego[]);
 void verCatalogoVideojuegos();
 
 int buscarTorneoPorIDParaMati(char id[], Torneo *T, int *pos);
@@ -307,7 +299,7 @@ void funcionMenu(int menu)
         {
             char idTorneo[10];
             printf("Ingrese el ID del torneo a modificar: ");
-            scanf("%d", idTorneo);
+            scanf("%s", idTorneo);
             modificarTorneoAEleccion(idTorneo);
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
