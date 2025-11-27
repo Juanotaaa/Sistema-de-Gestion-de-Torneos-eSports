@@ -64,7 +64,7 @@ return id;
 }
 
 
-int buscarTorneoPorID(int id)
+int buscarTorneoPorID(char idTorneo[])
 {
     FILE* archivo = fopen("torneos.bin", "rb");
     if (!archivo)
@@ -74,7 +74,7 @@ int buscarTorneoPorID(int id)
 
     while (fread(&aux, sizeof(Torneo), 1, archivo) == 1)
     {
-        if (aux.idTorneo == id)
+        if (strcmp(aux.idTorneo, id) > 0)
         {
             fclose(archivo);
             return 1; // Encontrado
@@ -95,7 +95,7 @@ void guardarTorneo(Torneo t)
 Torneo cargaTorneo()
 {
     Torneo T;
-    int idTorneo;
+    char idTorneo;
     idTorneo=obtenerProximoIDTorneo();
 
     printf("\n=== CREAR NUEVO TORNEO ===\n");
@@ -235,7 +235,7 @@ void actualizarEstadoTorneo(Torneo *T)
 
 void mostrarTorneo(Torneo T)
 {
-    printf("\n=== ID Torneo: %d ======\n", T.idTorneo);
+    printf("\n=== ID Torneo: %s ======\n", T.idTorneo);
     printf("\n=== Nombre: %s ===\n", T.nombre);
     printf("\n=== Juego: %s ===\n", T.juego.nombre);
     printf("\n=== Capacidad Maxima: %d ===\n", T.capacidadMaxima);
@@ -436,7 +436,7 @@ void mostrarTorneosAbiertos(Torneo T)
 {
         if (strcmp(T.estado, "Abierto") == 0)
         {
-            printf("ID: %d | Nombre: %s | Juego: %s | Cupos Disponibles: %d\n", T.idTorneo, T.nombre, T.juego.nombre, T.cuposDisponibles);
+            printf("ID: %s | Nombre: %s | Juego: %s | Cupos Disponibles: %d\n", T.idTorneo, T.nombre, T.juego.nombre, T.cuposDisponibles);
         }else{
             printf("No hay torneos abiertos disponibles en este momento.\n");
         }
@@ -488,7 +488,7 @@ int contarTorneos(){
 return cant;
 }
 
-int buscarTorneo(int idTorneo, Torneo* torneo){
+int buscarTorneo(char idTorneo[], Torneo* torneo){
 
     FILE * ArchivoTorneo = fopen("torneos.bin", "rb");
 
@@ -501,7 +501,7 @@ int buscarTorneo(int idTorneo, Torneo* torneo){
 
     while(fread(torneo, sizeof(Torneo), 1, ArchivoTorneo)){
 
-        if(idTorneo == torneo->idTorneo){
+        if(strcmp(idTorneo, torneo.idTorneo) > 0){
 
             return 1;
         }
@@ -553,7 +553,7 @@ void torneosSinParticipantes()
             {
                 while (fread(&I, sizeof(Inscripcion), 1, archIns) == 1)
                 {
-                    if (I.idTorneo == T.idTorneo)
+                    if (strcmp(I.idTorneo, T.idTorneo)> 0)
                     {
                         tieneParticipantes = 1;
                         break; // hay participante salimos
@@ -564,7 +564,7 @@ void torneosSinParticipantes()
 
             if (!tieneParticipantes)
             {
-                printf("ID: %d | Nombre: %s | Juego: %s | Plataforma: %s | Cupos: %d\n",T.idTorneo, T.nombre, T.juego.nombre, T.juego.plataforma, T.cuposDisponibles);
+                printf("ID: %s | Nombre: %s | Juego: %s | Plataforma: %s | Cupos: %d\n",T.idTorneo, T.nombre, T.juego.nombre, T.juego.plataforma, T.cuposDisponibles);
             }
         }
     }

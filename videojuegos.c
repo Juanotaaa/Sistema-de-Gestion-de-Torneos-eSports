@@ -158,7 +158,7 @@ void modificarVideojuego(char idJuego[])
 
     while (fread(&aux, sizeof(Videojuego), 1, archivo) == 1)
     {
-        if (aux.idJuego == idJuego)
+        if (strcmpi(aux.idJuego, idJuego) == 0)
         {
             encontrado = 1;
 
