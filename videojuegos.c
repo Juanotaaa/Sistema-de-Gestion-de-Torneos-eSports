@@ -162,36 +162,50 @@ void modificarVideojuego(int idJuego)
         {
             encontrado = 1;
 
+            Videojuego original = aux; // Guardamos copia del original
+
             // Nuevo nombre
             do
             {
                 printf("Nuevo nombre (solo letras y numeros): ");
                 scanf("%49s", aux.nombre);
+
                 if (!letrasYNumeros(aux.nombre))
+                {
                     printf("ERROR: El nombre solo puede contener letras y numeros.\n");
-            }
-            while (!letrasYNumeros(aux.nombre));
+                }
+                else if (strcmpi(aux.nombre, original.nombre) != 0 && existeVideojuego(aux.nombre))
+                {
+                    // Evita conflicto si escribe el mismo nombre que ya tenia
+                    printf("ERROR: Ya existe un videojuego con ese nombre.\n");
+                }
+
+            } while (!letrasYNumeros(aux.nombre) ||
+                    (strcmpi(aux.nombre, original.nombre) != 0 && existeVideojuego(aux.nombre)));
 
             // Nuevo genero
             do
             {
                 printf("Nuevo genero: ");
                 scanf("%29s", aux.genero);
+
                 if (!soloLetras(aux.genero))
                     printf("ERROR: El genero no puede contener numeros ni simbolos.\n");
-            }
-            while (!soloLetras(aux.genero));
+
+            } while (!soloLetras(aux.genero));
 
             // Nueva plataforma
             do
             {
                 printf("Nueva plataforma (PC | XBOX | PS4 | PS5): ");
                 scanf("%19s", aux.plataforma);
+
                 if (!validarPlataforma(aux.plataforma))
                     printf("ERROR: Plataforma invalida.\n");
-            }
-            while (!validarPlataforma(aux.plataforma));
 
+            } while (!validarPlataforma(aux.plataforma));
+
+            // Guardar cambios
             fseek(archivo, -sizeof(Videojuego), SEEK_CUR);
             fwrite(&aux, sizeof(Videojuego), 1, archivo);
 
@@ -206,6 +220,7 @@ void modificarVideojuego(int idJuego)
 
     fclose(archivo);
 }
+
 
 // VER CATALOGO DE VIDEOJUEGOS
 void verCatalogoVideojuegos()
