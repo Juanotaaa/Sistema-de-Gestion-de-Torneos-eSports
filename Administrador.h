@@ -14,5 +14,7 @@ typedef struct stAdministrador
 /// PROTIPADOS
 int loginAdministrador();
 int validacionUsuarioAdmin(char usuarioAdmin[], int validos, char contraseniaAdmin[]);
-
+void verListadoUsuarios();
+void verInfoDetalladaUsuario();
+void agregarModificarUsuario();
 #endif
