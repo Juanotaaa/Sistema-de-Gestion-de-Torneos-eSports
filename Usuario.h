@@ -1,6 +1,10 @@
 #ifndef USUARIO_H
 #define USUARIO_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define MIN_NICKNAME 5
 #define MAX_NICKNAME 8
 #define MIN_CONTRA 5
@@ -19,18 +23,18 @@ typedef struct stUsuario
     int nivel;
 } Usuario;
 
-///PROTOTIPADOS
+/// PROTOTIPADOS
 int validacionContrasenia(char contrasenia[]);
 int validaciondeNickname(char nickname[]);
-int crearUsuario(Usuario*u);
-int guardarUsuario(Usuario, char[]);
-int loginUsuario(Usuario *u, int * hayUsuarioLogueado);
+int crearUsuario(Usuario *u);
+int guardarUsuario(Usuario u, char archivo[]);
+int loginUsuario(Usuario *u, int *hayUsuarioLogueado);
 int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[]);
 int validarUsuarioRepetido(char nickname[]);
 int idUsuario();
-int agregarInformacionUsuario(Usuario*info);
+int agregarInformacionUsuario(Usuario *info);
 int validarNumTelefonico(char numTelefonico[]);
 int validacionPaises(char Pais[]);
-int validarNumTelefonicoRepetido(char* numTelefono);
-
+int validarNumTelefonicoRepetido(char *numTelefono);
+void mostrarPerfilUsuario(Usuario u);
 #endif

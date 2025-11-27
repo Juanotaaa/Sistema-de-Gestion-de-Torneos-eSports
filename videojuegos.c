@@ -3,17 +3,19 @@
 #include <string.h>
 #include "videojuegos.h"
 
-// VALIDAR QUE NO HAYA NUMEROS
-int tieneNumero(char cadena[])
+// VALIDAR QUE SOLO HAYA LETRAS Y NUMEROS (sin símbolos)
+int letrasYNumeros(char *cadena)
 {
-    int i = 0;
-    while (cadena[i] != '\0')
+    for (int i = 0; cadena[i] != '\0'; i++)
     {
-        if (cadena[i] >= '0' && cadena[i] <= '9')
-            return 1;
-        i++;
+        if (!((cadena[i] >= 'A' && cadena[i] <= 'Z') ||
+              (cadena[i] >= 'a' && cadena[i] <= 'z') ||
+              (cadena[i] >= '0' && cadena[i] <= '9')))
+        {
+            return 0; // símbolo invalido
+        }
     }
-    return 0;
+    return 1;
 }
 
 // VALIDAR QUE SOLO HAYA LETRAS (sin símbolos ni números)
@@ -28,6 +30,27 @@ int soloLetras(char *cadena)
         }
     }
     return 1;
+}
+
+// VERIFICAR SI UN VIDEOJUEGO YA EXISTE POR NOMBRE
+int existeVideojuego(char nombre[])
+{
+    FILE *archivo = fopen("videojuegos.bin", "rb");
+    if (!archivo)
+        return 0;
+
+    Videojuego aux;
+    while (fread(&aux, sizeof(Videojuego), 1, archivo) == 1)
+    {
+        if (strcmpi(aux.nombre, nombre) == 0)
+        {
+            fclose(archivo);
+            return 1;
+        }
+    }
+
+    fclose(archivo);
+    return 0;
 }
 
 // GENERAR ID AUTOMATICO PARA VIDEOJUEGO
@@ -70,22 +93,25 @@ Videojuego cargaVideojuego()
     // Nombre
     do
     {
-        printf("Ingrese nombre: ");
+        printf("Ingrese nombre (solo letras y numeros): ");
         scanf("%49s", juego.nombre);
-        if (tieneNumero(juego.nombre) || !soloLetras(juego.nombre))
-            printf("ERROR: El nombre no puede contener numeros ni simbolos.\n");
-    }
-    while (tieneNumero(juego.nombre) || !soloLetras(juego.nombre));
+
+        if (!letrasYNumeros(juego.nombre))
+            printf("ERROR: El nombre solo puede contener letras y numeros.\n");
+        else if (existeVideojuego(juego.nombre))
+            printf("ERROR: Ya existe un videojuego con ese nombre.\n");
+
+    } while (!letrasYNumeros(juego.nombre) || existeVideojuego(juego.nombre));
 
     // Genero
     do
     {
         printf("Ingrese genero: ");
         scanf("%29s", juego.genero);
-        if (tieneNumero(juego.genero) || !soloLetras(juego.genero))
+        if (!soloLetras(juego.genero))
             printf("ERROR: El genero no puede contener numeros ni simbolos.\n");
     }
-    while (tieneNumero(juego.genero) || !soloLetras(juego.genero));
+    while (!soloLetras(juego.genero));
 
     // Plataforma
     do
@@ -136,36 +162,50 @@ void modificarVideojuego(int idJuego)
         {
             encontrado = 1;
 
+            Videojuego original = aux; // Guardamos copia del original
+
             // Nuevo nombre
             do
             {
-                printf("Nuevo nombre: ");
+                printf("Nuevo nombre (solo letras y numeros): ");
                 scanf("%49s", aux.nombre);
-                if (tieneNumero(aux.nombre) || !soloLetras(aux.nombre))
-                    printf("ERROR: El nombre no puede contener numeros ni simbolos.\n");
-            }
-            while (tieneNumero(aux.nombre) || !soloLetras(aux.nombre));
 
-            // Nuevo género
+                if (!letrasYNumeros(aux.nombre))
+                {
+                    printf("ERROR: El nombre solo puede contener letras y numeros.\n");
+                }
+                else if (strcmpi(aux.nombre, original.nombre) != 0 && existeVideojuego(aux.nombre))
+                {
+                    // Evita conflicto si escribe el mismo nombre que ya tenia
+                    printf("ERROR: Ya existe un videojuego con ese nombre.\n");
+                }
+
+            } while (!letrasYNumeros(aux.nombre) ||
+                    (strcmpi(aux.nombre, original.nombre) != 0 && existeVideojuego(aux.nombre)));
+
+            // Nuevo genero
             do
             {
                 printf("Nuevo genero: ");
                 scanf("%29s", aux.genero);
-                if (tieneNumero(aux.genero) || !soloLetras(aux.genero))
+
+                if (!soloLetras(aux.genero))
                     printf("ERROR: El genero no puede contener numeros ni simbolos.\n");
-            }
-            while (tieneNumero(aux.genero) || !soloLetras(aux.genero));
+
+            } while (!soloLetras(aux.genero));
 
             // Nueva plataforma
             do
             {
                 printf("Nueva plataforma (PC | XBOX | PS4 | PS5): ");
                 scanf("%19s", aux.plataforma);
+
                 if (!validarPlataforma(aux.plataforma))
                     printf("ERROR: Plataforma invalida.\n");
-            }
-            while (!validarPlataforma(aux.plataforma));
 
+            } while (!validarPlataforma(aux.plataforma));
+
+            // Guardar cambios
             fseek(archivo, -sizeof(Videojuego), SEEK_CUR);
             fwrite(&aux, sizeof(Videojuego), 1, archivo);
 
@@ -180,6 +220,7 @@ void modificarVideojuego(int idJuego)
 
     fclose(archivo);
 }
+
 
 // VER CATALOGO DE VIDEOJUEGOS
 void verCatalogoVideojuegos()

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-const char Paises[100][100]={"Argentina", "Chile", "Uruguay", "Mexico", "Colombia", "Venezuela", 
+const char Paises[100][100]={"Argentina", "Chile", "Uruguay", "Mexico", "Colombia", "Venezuela",
     "Peru", "Estados Unidos", "España", "Japon", "Italia", "Francia", "Portugal", "Otro"};
 const int cantPaises=14;
 
@@ -46,7 +46,7 @@ int validaciondeNickname(char nickname[])
 
 int crearUsuario(Usuario* u)
 {
-    
+
     printf("\nRecuerde que para registrarse, debe ingresar: un nombre de usuario que no este siendo utilizado y que cumpla con el siguiente requisito:\n");
     printf("-Caracteres minimo: 5\n");
     printf("-Caracteres maximos: 8\n");
@@ -79,7 +79,7 @@ int crearUsuario(Usuario* u)
                 scanf(" %c", &control);
                 fflush(stdin);
             }
-    
+
         }
 
         if(control=='n' || control=='N'){
@@ -199,7 +199,7 @@ int validacionPaises(char Pais[]){
 
 int validarNumTelefonico(char numTelefonico[]){
 
-    
+
    int dimension=strlen(numTelefonico);
     int esValido=1;
     if(dimension<MIN_TELEFONO || dimension>MAX_TELEFONO)
@@ -277,7 +277,7 @@ int validarUsuarioRepetido(char nickname[]){
         printf("\nNo se pudo abrir el archivo en modo lectura\n");
         return 1;
     }
-    
+
     Usuario u;
     while(fread(&u, sizeof(Usuario), 1, ArchivoUsuario)){
         if(strcmp(u.nickname, nickname)==0){
@@ -396,4 +396,14 @@ int validacionUsuario(char archivo[], char usuario[], char contraseniaUsuario[])
     }
     fclose(usuarioArchivo);
     return 0;
+}
+
+void mostrarPerfilUsuario(Usuario u)
+{
+    printf("\n--- PERFIL USUARIO ---\n");
+    printf("ID: %s\n", u.idUsuario);
+    printf("Nickname: %s\n", u.nickname);
+    printf("Numero de Telefono : %s\n", u.numTelefonico);
+    printf("Pais: %s\n", u.pais);
+    printf("Nivel: %d\n", u.nivel);
 }
