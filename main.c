@@ -307,7 +307,7 @@ void funcionMenu(int menu)
         {
             char idTorneo[10];
             printf("Ingrese el ID del torneo a modificar: ");
-            scanf("%s", idTorneo);
+            scanf("%d", idTorneo);
             modificarTorneoAEleccion(idTorneo);
             system("pause");
             funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
@@ -338,45 +338,55 @@ void funcionMenu(int menu)
         break;
 
     case MENU_ADMINISTRADOR_VIDEOJUEGOS:
-        printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
-        printf("\n\t[1]-Cargar videojuego\n");
-        printf("\n\t[2]-Modificar videojuego\n");
-        printf("\n\t[3]-Ver catalogo videojuegos\n");
-        printf("\n\t[4]-Regresar al MENU ADMINISTRADOR\n");
-        scanf("%s", opcion);
-        if(strcmp(opcion, "1")==0)
         {
-            Videojuego juego = cargaVideojuego();
-            guardarVideojuego(juego);
-            system("pause");
-            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+            char opcion[10];
+            printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
+            printf("\n\t[1]-Cargar videojuego\n");
+            printf("\n\t[2]-Modificar videojuego\n");
+            printf("\n\t[3]-Ver catalogo videojuegos\n");
+            printf("\n\t[4]-Regresar al MENU ADMINISTRADOR\n");
+            scanf("%s", opcion);
+            fflush(stdin);
+
+            if(strcmp(opcion, "1") == 0)
+            {
+                Videojuego juego = cargaVideojuego();
+                if(guardarVideojuego(juego))
+                    printf("\nVideojuego cargado correctamente.\n");
+                else
+                    printf("\nError al guardar el videojuego.\n");
+                system("pause");
+                funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+            }
+            else if(strcmp(opcion, "2") == 0)
+            {
+                verCatalogoVideojuegos();
+                int idModificado;
+                printf("\nIngrese ID del videojuego a modificar: ");
+                scanf("%d", &idModificado);
+                fflush(stdin);
+                modificarVideojuego(idModificado);
+                system("pause");
+                funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+            }
+            else if(strcmp(opcion, "3") == 0)
+            {
+                verCatalogoVideojuegos();
+                system("pause");
+                funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+            }
+            else if(strcmp(opcion, "4") == 0)
+            {
+                funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
+            }
+            else
+            {
+                printf("\n\tOpcion invalida\n");
+                system("pause");
+                funcionMenu(MENU_ADMINISTRADOR_VIDEOJUEGOS);
+            }
         }
-        if(strcmp(opcion, "2")==0)
-        {
-            char idModificado[10];
-            printf("Ingrese ID del videojuego a modificar: ");
-            scanf("%s", idModificado);
-            modificarVideojuego(idModificado);
-            system("pause");
-            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
-        }
-        if(strcmp(opcion, "3")==0)
-        {
-            verCatalogoVideojuegos();
-            system("pause");
-            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
-        }
-        if(strcmp(opcion, "4")==0)
-        {
-            funcionMenu(MENU_ADMINISTRADOR_LOGEADO);
-        }
-        else
-        {
-            printf("\n\tOpcion invalida\n");
-            system("pause");
-            funcionMenu(MENU_ADMINISTRADOR_VIDEOJUEGOS);
-        }
-    break;
+        break;
 
     case MENU_ADMINISTRADOR_USUARIOS:
         printf("\n\tADMINISTRADOR - Presione la opcion que desea:\n");
@@ -576,7 +586,6 @@ void registrarInscripcion()
 
 
 }
-
 
 
 //FUNCIONES DE JUANI
